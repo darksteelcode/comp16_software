@@ -5,11 +5,11 @@
 
 //Loop to add a slight delay between characters
 label wait_loop_start;
-mov AX A 0;
+mov BX A 0;
 prb B 0;
 pra B 1;
-mov RES AX;
-mov AX CND;
+mov RES BX;
+mov BX CND;
 jpc CR wait_loop_start;
 
 //Check to make sure serial port is clear - if port 4 is 1, tx is still sending

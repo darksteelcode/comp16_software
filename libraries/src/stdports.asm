@@ -9,3 +9,7 @@
 #define SERIAL_DATA_OUT 3\
 //This port contains a bit, that when high, indicates that the uart is still sending data. If low, the uart is not busy, and data can be sent
 #define SERIAL_TX_BUSY 4\
+
+//Graphics Memory Ports
+#define GFX_TXT_ADDR 5\
+#define GFX_TXT_DATA 6\

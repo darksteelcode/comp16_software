@@ -13,3 +13,8 @@
 //Graphics Memory Ports
 #define GFX_TXT_ADDR 5\
 #define GFX_TXT_DATA 6\
+
+//PS2 Keyboard Ports
+#define KEY_DATA 7\
+#define KEY_NEXT 7\
+#define KEY_IN_WAITING 8\

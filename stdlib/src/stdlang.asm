@@ -1,5 +1,5 @@
 /* Standard Language Macros - darksteelcode
- * macros mv and put to abstract away weirdnesses with isa, and make writing macros for ANY types easier
+ * macros mv, put, jump, jumpc, inc, and dec to abstract away weirdnesses with isa, and make writing macros for ANY types easier
  */
 
 /* mv instruction (mv ANY src ANY dst [VAL op])
@@ -139,4 +139,38 @@ mov CR CR op;
 \
 #macro put ANY src VAL dst VAL op
 	mov CR CR op;
+\
+/* jump and jumpc instructions
+ * jump and conditional jumps
+ */
+#macro jump MEM loc
+	prb CR loc;
+	jmp CR loc;
+\
+#macro jumpc MEM loc
+	prb CR loc;
+	jpc CR loc;
+\
+/* inc and dec instructions
+ * Increment and deincrement values
+ */
+#macro inc REG reg
+	mv reg A 0;
+	put 1 B;
+	mv RES reg;
+\
+#macro inc MEM mem
+	mv mem A 0;
+	put 1 B;
+	mv RES mem;
+\
+#macro dec REG reg
+	mv reg A 1;
+	put 1 B;
+	mv RES reg;
+\
+#macro dec MEM mem
+	mv mem A 1;
+	put 1 B;
+	mv RES mem;
 \

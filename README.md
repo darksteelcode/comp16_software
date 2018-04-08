@@ -5,4 +5,4 @@ Requires an installation of [the comp16 assembler and build tools](https://githu
 
 Should you want to use comp16, the fpga [source](https://github.com/darksteelcode/comp16) is required to use the microprossessor on an fpga - this is not easy to use at the moment.
 
-To build these programs, type `make` in the home directory.
+To build these programs, type `make` in the home directory, and, to install the standard library (recommened), do `sudo make install`.

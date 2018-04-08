@@ -5,7 +5,9 @@
 //Register Usage - AX - Addr in memory to currently write to, BX - current instr being loaded
 label mem_start;
 //Program is at 0xff00
-#repeat 0xff00
+
+//JUST FOR NOW, PLACE AT DIFFERENT SPOT
+#repeat 0x00f0
 . 0;\
 label init;
 	//Clear Regs
@@ -114,8 +116,8 @@ jmp CR wait_data_loop;
 label prepare_for_jump;
 prb AX 0;
 pra AX 0;
-prb AX 0;
-pra AX 0;
+prb BX 0;
+pra BX 0;
 prb A 0;
 pra A 0;
 prb B 0;
@@ -129,6 +131,5 @@ jmp CR mem_start;
 
 label string;
 #string
-Comp16 Serial Bootloader - Waiting for transmission...\
-
+Comp16 Bootloader\
 . 0;

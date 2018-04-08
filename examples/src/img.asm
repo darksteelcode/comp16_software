@@ -121,8 +121,8 @@ prb CR 0xff00;
 jmp CR 0xff00;
 
 label img1;
-#include tests/src/img_data1.txt\
+#include examples/src/img_data1.txt\
 label img2;
-#include tests/src/img_data2.txt\
+#include examples/src/img_data2.txt\
 label img3;
-#include tests/src/img_data3.txt\
+#include examples/src/img_data3.txt\

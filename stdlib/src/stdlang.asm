@@ -142,12 +142,18 @@ mov CR CR op;
 \
 /* jump and jumpc instructions
  * jump and conditional jumps
+ * jumpc acepts an argument to use as value as conditional value for jumping
  */
 #macro jump MEM loc
 	prb CR loc;
 	jmp CR loc;
 \
 #macro jumpc MEM loc
+	prb CR loc;
+	jpc CR loc;
+\
+#macro jumpc ANY cond MEM loc
+	mv cond CND;
 	prb CR loc;
 	jpc CR loc;
 \

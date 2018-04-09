@@ -28,5 +28,3 @@
 #macro print! MEM string
 	print! string 0;
 \
-
-

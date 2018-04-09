@@ -9,7 +9,7 @@
 
 //Wait for a certain number of loops
 #macro wait! VAL cycles
-        put 0 AX;
+	put 0 AX;
         put 0 BX;
         label MACROID0;
                 inc AX;
@@ -22,4 +22,3 @@
         jumpc MACROID0;
 \
 
-wait! 3;

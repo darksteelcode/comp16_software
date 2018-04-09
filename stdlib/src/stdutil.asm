@@ -18,8 +18,8 @@
         mv BX B OP_>;
         put cycles A;
         mv RES CND;
-        jumpc MACROID0;
         inc BX;
+        jumpc MACROID0;
 \
 
 wait! 3;

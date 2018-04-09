@@ -1,10 +1,14 @@
-//Macro Testing - doesn't do anything interesting
+//Macro Testing - various tests of macros
 
 #include std.asm\
 
-print! string;
+print! str;
 
-label string;
+label end;
+jump end;
+
+
+label str;
 #string
-This is a test.
+Hello macros, goodbye typing out the same code over, and over, and over again! (It might actually work this time?)
 \

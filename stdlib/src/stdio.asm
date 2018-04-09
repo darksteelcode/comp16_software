@@ -14,15 +14,15 @@
 	put pos_on_screen BX;
 
 	label MACROID0;
+		mv AX MAR;
 		out BX GFX_TXT_ADDR;
-		mov AX MAR;
-		mov MDR CND;
+		mv MDR A OP_NOT;
+		mv RES CND;
 		jumpc MACROID1;
 		out MDR GFX_TXT_DATA;
 		inc AX;
 		inc BX;
 		jump MACROID0;
-
 	label MACROID1;
 \
 #macro print! MEM string

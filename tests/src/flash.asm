@@ -16,17 +16,9 @@
 
 print! msg;
 
-in A KEY_IN_WAITING;
-mv CR CR OP_NOT;
-mv RES CND;
-jumpc key_wait;
-
-label key_clear;
-out A KEY_NEXT;
-in CND KEY_IN_WAITING;
-jumpc key_clear;
-
+clear_keys!;
 label key_wait;
+
 in A KEY_IN_WAITING;
 mv CR CR OP_NOT;
 mov RES CND;

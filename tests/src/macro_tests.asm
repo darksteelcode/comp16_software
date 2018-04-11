@@ -8,7 +8,6 @@ label end;
 jump end;
 
 
-label str;
-#string
+#string str
 Hello macros, goodbye typing out the same code over, and over, and over again! (It might actually work this time?)
 \

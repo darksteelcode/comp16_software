@@ -6,10 +6,24 @@
 label mem_start;
 //Program is at 0xff00
 
-//JUST FOR NOW, PLACE AT DIFFERENT SPOT
-#repeat 0x00f0
+#repeat 0xff00
 . 0;\
 label init;
+	//Clear PS2 Keys FIFO
+	//If there are no key presses in the buffer, skip this step
+	in A KEY_IN_WAITING;
+	mov CR CR OP_NOT;
+	mov RES CND;
+	prb CR key_clear_end;
+	jpc CR key_clear_end;
+
+	label key_clear;
+	out A KEY_NEXT;
+	in CND KEY_IN_WAITING;
+	prb CR key_clear;
+	jpc CR key_clear;
+
+	label key_clear_end;
 	//Clear Regs
 	pra BX 0;
 	prb BX 0;
@@ -132,4 +146,3 @@ jmp CR mem_start;
 label string;
 #string
 Comp16 Bootloader\
-. 0;

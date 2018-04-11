@@ -21,17 +21,3 @@
         inc BX;
         jumpc MACROID0;
 \
-
-#macro clear_keys!
-	in A KEY_IN_WAITING;
-	mv CR CR OP_NOT;
-	mv RES CND;
-	jumpc MACROID1;
-
-	label MACROID0;
-	out A KEY_NEXT;
-	in CND KEY_IN_WAITING;
-	jumpc MACROID0;
-
-	label MACROID1;
-\

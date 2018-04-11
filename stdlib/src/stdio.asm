@@ -29,7 +29,7 @@
 	print! string 0;
 \
 
-#macro clear_keys!
+#macro ps2_clear_keys!
 	in A KEY_IN_WAITING;
 	mv CR CR OP_NOT;
 	mv RES CND;
@@ -42,3 +42,12 @@
 
 	label MACROID1;
 \
+
+#macro ps2_wait_for_key!
+	label MACROID0;
+	in A KEY_IN_WAITING;
+	mv CR CR OP_NOT;
+	mv RES CND;
+	jumpc MACROID0;
+\
+

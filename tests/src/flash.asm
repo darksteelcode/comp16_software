@@ -16,7 +16,7 @@
 
 print! msg;
 
-clear_keys!;
+ps2_clear_keys!;
 label key_wait;
 
 in A KEY_IN_WAITING;

@@ -28,5 +28,6 @@ prb B 1;
 pra B 1;
 mov RES BX;
 out AX 0;
+out AX GFX_TXT_DATA;
 prb CR start;
 jmp CR start;

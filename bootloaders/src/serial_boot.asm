@@ -70,6 +70,31 @@ label init;
 	pra AX 0;
 	prb AX 0;
 
+label key_wait;
+in A KEY_IN_WAITING;
+mov CR CR OP_NOT;
+mov RES CND;
+prb CR key_wait;
+jpc CR key_wait;
+
+in A KEY_DATA;
+out A KEY_DATA;
+mov CR CR OP_&;
+prb B 0x00ff;
+pra B 0x00ff;
+//Check for Esc
+mov RES A OP_==;
+prb B 27;
+pra B 27;
+mov RES CND;
+prb CR serial_start;
+jpc CR serial_start;
+
+//Wait for valid key
+prb CR key_wait;
+jmp CR key_wait;
+
+label serial_start;
 //Wait until there is at least 2 bytes in waiting
 label wait_data_loop;
 	in B SERIAL_IN_WAITING;
@@ -128,6 +153,7 @@ jmp CR wait_data_loop;
 
 //Try to make machine state the same as if the bootloader had not been run
 label prepare_for_jump;
+
 prb AX 0;
 pra AX 0;
 prb BX 0;
@@ -145,4 +171,4 @@ jmp CR mem_start;
 
 label string;
 #string
-Comp16 Bootloader\
+Comp16 Bootloader                       Esc-Serial\

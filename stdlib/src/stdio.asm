@@ -51,3 +51,15 @@
 	jumpc MACROID0;
 \
 
+#macro txt_clear_screen!
+	put 0 AX;
+	put 0 BX;
+	label MACROID0;
+	out AX GFX_TXT_ADDR;
+	out BX GFX_TXT_DATA;
+	inc AX;
+	mv AX B OP_>;
+	put 1000 A;
+	mv RES CND;
+	jumpc MACROID0;
+\

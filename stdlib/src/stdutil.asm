@@ -21,9 +21,3 @@
         inc BX;
         jumpc MACROID0;
 \
-
-#macro inf_loop! CODE code
-	label MACROID0;
-	code
-	jump MACROID0;
-\

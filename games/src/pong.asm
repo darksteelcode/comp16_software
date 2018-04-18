@@ -27,9 +27,10 @@
 	inc BX 40;
 	out BX GFX_TXT_ADDR;
 	out AX GFX_TXT_DATA;
-
-
 \
+
+//Init
+txt_clear_screen!;
 
 //Game Logic
 draw_padel1;

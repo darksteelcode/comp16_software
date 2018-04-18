@@ -17,7 +17,7 @@
 	label MACROID0;
 	code
 	inc var;
-	mv VAR B OP_>;
+	mv var B OP_>;
 	put end A;
 	mv RES CND;
 	jumpc MACROID0;

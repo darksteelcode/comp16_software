@@ -16,6 +16,15 @@
 	mv RES A;
 	mv BX B OP_+;
 	mv RES BX;
+
+	out BX GFX_TXT_ADDR;
+	out AX GFX_TXT_DATA;
+
+	inc BX 40;
+	out BX GFX_TXT_ADDR;
+	out AX GFX_TXT_DATA;
+
+	inc BX 40;
 	out BX GFX_TXT_ADDR;
 	out AX GFX_TXT_DATA;
 
@@ -23,9 +32,11 @@
 \
 
 //Game Logic
+draw_padel1;
 
+hang!;
 
-/Memory Locations
+//Memory Locations
 label w_pressed;
 . 0;
 label s_pressed;

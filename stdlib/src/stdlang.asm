@@ -175,7 +175,7 @@ mov CR CR op;
 	put v B;
 	mv RES reg;
 \
-#macro inc MEM mem VAL
+#macro inc MEM mem VAL v
 	mv mem A 0;
 	put v B;
 	mv RES reg;
@@ -195,7 +195,7 @@ mov CR CR op;
 	put v B;
 	mv RES reg;
 \
-#macro dec MEM mem VAL
+#macro dec MEM mem VAL v
 	mv mem A 1;
 	put v B;
 	mv RES reg;

@@ -170,6 +170,16 @@ mov CR CR op;
 	put 1 B;
 	mv RES mem;
 \
+#macro inc REG reg VAL v
+	mv reg A 0;
+	put v B;
+	mv RES reg;
+\
+#macro inc MEM mem VAL
+	mv mem A 0;
+	put v B;
+	mv RES reg;
+\
 #macro dec REG reg
 	mv reg A 1;
 	put 1 B;
@@ -179,4 +189,14 @@ mov CR CR op;
 	mv mem A 1;
 	put 1 B;
 	mv RES mem;
+\
+#macro dec REG reg VAL v
+	mv reg A 1;
+	put v B;
+	mv RES reg;
+\
+#macro dec MEM mem VAL
+	mv mem A 1;
+	put v B;
+	mv RES reg;
 \

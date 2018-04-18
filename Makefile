@@ -1,5 +1,8 @@
 .PHONY: all
-all: bootloaders examples tests
+all: bootloaders examples tests games
+.PHONY:	games
+games:
+	./build games
 .PHONY: bootloaders
 bootloaders:
 	./build bootloaders

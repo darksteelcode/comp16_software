@@ -23,7 +23,7 @@
 \
 
 //Draw a padel
-#macro draw_padel MEM padel VAL col
+#macro draw_padle MEM padel VAL col
 	//AX is char to print
 	put 219 AX;
 	//BX is loc on screen
@@ -77,9 +77,9 @@
 	out A KEY_NEXT;
 
 	//Minus is equivelent to !=
-	// W and S
+	// W and S 87 is w, 83 is s
 	mv CR CR OP_-;
-	put 'w' B;
+	put 119 B;
 	jumpc RES MACROID1;
 
 		//If w, do the following
@@ -88,7 +88,7 @@
 
 	label MACROID1;
 	mv CR CR OP_-;
-	put 's' B;
+	put 115 B;
 	jumpc RES MACROID2;
 
 		//If s, do the following
@@ -97,7 +97,7 @@
 	//343 is w released, 339 is s released
 	label MACROID2;
 	mv CR CR OP_-;
-	put 343 B;
+	put 375 B;
 	jumpc RES MACROID3;
 
 		//If w released, do the following
@@ -105,7 +105,7 @@
 
 	label MACROID3;
 	mv CR CR OP_-;
-	put 339 B;
+	put 371 B;
 	jumpc RES MACROID4;
 
 		//If s released, do the following
@@ -114,23 +114,88 @@
 
 
 	//Up and Down
+
+	// W and S 87 is w, 83 is s
+	mv CR CR OP_-;
+	put 38 B;
+	jumpc RES MACROID5;
+
+		//If w, do the following
+		mv 1 up_pressed;
+		mv 0 down_pressed;
+
+	label MACROID5;
+	mv CR CR OP_-;
+	put 40 B;
+	jumpc RES MACROID6;
+
+		//If s, do the following
+		mv 1 down_pressed;
+		mv 0 up_pressed;
+	//343 is w released, 339 is s released
+	label MACROID6;
+	mv CR CR OP_-;
+	put 294 B;
+	jumpc RES MACROID7;
+
+		//If w released, do the following
+		mv 0 up_pressed;
+
+	label MACROID7;
+	mv CR CR OP_-;
+	put 296 B;
+	jumpc RES MACROID8;
+
+		//If s released, do the following
+		mv 0 down_pressed;
+	label MACROID8;
+
+
+
 	in CND KEY_IN_WAITING;
 	jumpc MACROID0;
 
 
 	label MACROIDF;
+\
 
+#macro move_padle MEM padle MEM up_key MEM down_key
+	if! up_key {
+		dec padle;
+		//Check if paddle crossed limit - if it is greater than 21, then limit was crossed.
+		mv padle B OP_>=;
+		put 21 A;
+		mv RES CND;
+		jumpc MACROID0;
+		inc padle;
+	};
+	label MACROID0;
+	if! down_key {
+		inc padle;
+		mv padle B OP_>=;
+		put 21 A;
+		mv RES CND;
+		jumpc MACROID1;
+		dec padle;
+	};
+	label MACROID1;
+\
 
 //Init
 txt_clear_screen!;
 inf_loop! {
-	//Game Logic
+	//Handle Keys
+	update_keys;
+	move_padle padle1 w_pressed s_pressed;
+	move_padle padle2 up_pressed down_pressed;
+
+	//Draw
 	clear_column 1;
-	draw_padel padel1 1;
+	draw_padle padle1 1;
 	clear_column 38;
-	draw_padel padel2 38;
+	draw_padle padle2 38;
 	draw_ball;
-	wait! 2;
+	wait! 3;
 
 };
 
@@ -139,13 +204,13 @@ label w_pressed;
 . 0;
 label s_pressed;
 . 0;
-label padel1;
+label padle1;
 . 2;
 label up_pressed;
 . 0;
 label down_pressed;
 . 0;
-label padel2;
+label padle2;
 . 11;
 label ballX;
 . 20;

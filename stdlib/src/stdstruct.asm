@@ -22,4 +22,19 @@
 	mv RES CND;
 	jumpc MACROID0;
 \
-	
+
+//Run code if condition is true
+#macro if! ANY cond CODE code
+	mv cond A OP_NOT;
+	mv RES CND;
+	jumpc MACROID0;
+	code
+	label MACROID0;
+\
+
+#macro if_not! ANY cond CODE code
+	mv cond CND;
+	jumpc MACROID0;
+	code
+	label MACROID0;
+\

@@ -6,7 +6,7 @@
 #include stdutil.asm\
 #include stdstruct.asm\
 
-//Clear a column - used before padel draw
+//Clear a column - used before padle draw
 #macro clear_column VAL col
 	//AX is pos on screen
 	put col AX;
@@ -22,7 +22,7 @@
 
 \
 
-//Draw a padel
+//Draw a padle
 #macro draw_padle MEM padel VAL col
 	//AX is char to print
 	put 219 AX;
@@ -34,7 +34,7 @@
 	mv BX B OP_+;
 	mv RES BX;
 
-	for! CX 0 4 {
+	for! CX 0 3 {
 		out BX GFX_TXT_ADDR;
 		out AX GFX_TXT_DATA;
 
@@ -164,7 +164,7 @@
 		dec padle;
 		//Check if paddle crossed limit - if it is greater than 21, then limit was crossed.
 		mv padle B OP_>=;
-		put 21 A;
+		put 22 A;
 		mv RES CND;
 		jumpc MACROID0;
 		inc padle;
@@ -173,7 +173,7 @@
 	if! down_key {
 		inc padle;
 		mv padle B OP_>=;
-		put 21 A;
+		put 22 A;
 		mv RES CND;
 		jumpc MACROID1;
 		dec padle;
@@ -181,13 +181,58 @@
 	label MACROID1;
 \
 
+#macro move_ball
+	//Put past x
+	mv ballX pballX;
+	//Add d to x
+	mv ballX A OP_+;
+	mv dballX B OP_+;
+	mv RES ballX;
+	//put past y
+	mv ballY pballY;
+	//Add d to y
+	mv ballY A OP_+;
+	mv dballY B OP_+;
+	mv RES ballY;
+
+	//If ball is going to go off screen by y, negate the y (check if ballY == 0 or is greater or equal to 24)
+	mv ballY A OP_-;
+	put 1 B;
+	mv RES B OP_>;
+	put 22 A;
+	mv RES CND;
+	jumpc MACROID0;
+
+	mv dballY A OP_~;
+	mv RES A OP_+;
+	put 1 B;
+	mv RES dballY;
+
+	label MACROID0;
+
+\
+
 //Init
 txt_clear_screen!;
 inf_loop! {
-	//Handle Keys
-	update_keys;
-	move_padle padle1 w_pressed s_pressed;
-	move_padle padle2 up_pressed down_pressed;
+
+	mv key_count B OP_>=;
+	put 1 A;
+	if_not! RES {
+		//Handle Keys
+		update_keys;
+		move_padle padle1 w_pressed s_pressed;
+		move_padle padle2 up_pressed down_pressed;
+		put 0 key_count;
+	};
+
+	mv move_count B OP_>=;
+	put 2 A;
+	if_not! RES {
+		//Move ball
+		move_ball;
+		put 0 move_count;
+	};
 
 	//Draw
 	clear_column 1;
@@ -195,9 +240,17 @@ inf_loop! {
 	clear_column 38;
 	draw_padle padle2 38;
 	draw_ball;
-	wait! 3;
+	wait! 1;
 
+	inc move_count;
+	inc key_count;
 };
+
+label move_count;
+. 0;
+
+label key_count;
+. 0;
 
 //Memory Locations
 label w_pressed;
@@ -220,3 +273,7 @@ label pballX;
 . 19;
 label pballY;
 . 11;
+label dballX;
+. 1;
+label dballY;
+. 1;

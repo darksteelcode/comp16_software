@@ -280,6 +280,7 @@
 		draw_ball;
 		mv 0 time_wo_loss;
 		put 2 ball_time;
+		draw_scores;
 		wait! 40;
 	};
 \
@@ -416,21 +417,15 @@ label score1;
 label score2;
 . 48;
 
-label welcome_str;
-#string
+#string welcome_str 0b11011000
 Pong\
-label welcome_instr;
-#string
+#string welcome_instr
 Press a Key to Begin\
-label win1;
-#string
+#string win1
 Left Player Wins!\
-label win2;
-#string
+#string win2
 Right Player Wins!\
-label win_instr;
-#string
+#string win_instr
 First to 7 Wins\
-label name;
-#string
+#string name
 Edward Wawrzynek\

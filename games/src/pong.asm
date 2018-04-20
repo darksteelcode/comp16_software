@@ -1,10 +1,12 @@
 /* Pong - darksteelcode
- * A Work in Progress
+ * A replication of the classic. It is made more as a demonstration that comp16 can run a half-usefull program, and that one can be programed without terrible pan
  */
 
 #include std.asm\
 #include stdutil.asm\
 #include stdstruct.asm\
+
+#define SPEED_UP_TIME 200\
 
 //Clear a column - used before padle draw
 #macro clear_column VAL col
@@ -24,8 +26,8 @@
 
 //Draw a padle
 #macro draw_padle MEM padel VAL col
-	//AX is char to print
-	put 219 AX;
+	//AX is char to print - colored block
+	put 0x7cdb AX;
 	//BX is loc on screen
 	put col BX;
 	mv padel A OP_*;
@@ -34,7 +36,7 @@
 	mv BX B OP_+;
 	mv RES BX;
 
-	for! CX 0 3 {
+	for! CX 0 4 {
 		out BX GFX_TXT_ADDR;
 		out AX GFX_TXT_DATA;
 
@@ -59,7 +61,7 @@
 	mv ballX B;
 	out RES GFX_TXT_ADDR;
 	//Orange O
-	put 0xf04f AX;
+	put 0xe84f AX;
 	out AX GFX_TXT_DATA;
 \
 
@@ -162,9 +164,9 @@
 #macro move_padle MEM padle MEM up_key MEM down_key
 	if! up_key {
 		dec padle;
-		//Check if paddle crossed limit - if it is greater than 21, then limit was crossed.
+		//Check if paddle crossed limit - if it is greater than 20, then limit was crossed.
 		mv padle B OP_>=;
-		put 22 A;
+		put 21 A;
 		mv RES CND;
 		jumpc MACROID0;
 		inc padle;
@@ -173,7 +175,7 @@
 	if! down_key {
 		inc padle;
 		mv padle B OP_>=;
-		put 22 A;
+		put 21 A;
 		mv RES CND;
 		jumpc MACROID1;
 		dec padle;
@@ -212,8 +214,126 @@
 
 \
 
+//col_bounce is column to bounce on, NOT column of padle
+#macro bounce_ball MEM padle VAL col_bounce
+	mv col_bounce A OP_-;
+	mv ballX B OP_-;
+
+	if_not! RES {
+		mv ballY A OP_>=;
+		mv padle B OP_>=;
+		mv RES AX OP_>=;
+		mv padle B OP_+;
+		put 4 A;
+		mv RES A OP_>;
+		mv ballY B OP_>;
+		mv RES A OP_&;
+		mv AX B OP_&;
+
+		if! RES {
+			mv dballX A OP_~;
+			mv RES A OP_+;
+			put 1 B;
+			mv RES dballX;
+
+		};
+	};
+\
+#macro draw_scores
+	put 0 AX;
+	out AX GFX_TXT_ADDR;
+	mv score1 AX;
+	out AX GFX_TXT_DATA;
+	put 39 AX;
+	out AX GFX_TXT_ADDR;
+	mv score2 AX;
+	out AX GFX_TXT_DATA;
+\
+//Check if ball has gone off screen - if so, increment scores, invert dballX, and wait for a bit
+#macro update_scores_and_ball
+	mv ballX A;
+	mv CR CR OP_==;
+	put 0 B;
+	if! RES {
+		inc score2;
+	};
+	mv RES AX OP_==;
+	mv ballX A;
+	mv CR CR OP_==;
+	put 39 B;
+	mv RES BX OP_==;
+	if! RES {
+		inc score1;
+	};
+	mv AX B OP_OR;
+	mv BX A OP_OR;
+	if! RES {
+		put 20 ballX;
+		put 12 ballY;
+		put 19 pballX;
+		put 11 pballY;
+		put 1 dballY;
+		mv dballX A OP_~;
+		mv RES A OP_+;
+		put 1 B;
+		mv RES dballX;
+		draw_ball;
+		mv 0 time_wo_loss;
+		put 2 ball_time;
+		wait! 40;
+	};
+\
+
+#macro check_speed
+	mv time_wo_loss A OP_>;
+	put SPEED_UP_TIME B;
+	if! RES {
+		put 1 ball_time;
+	};
+\
+
+#macro check_end MEM score MEM str
+	mv score A OP_>;
+	put 54 B;
+	if! RES {
+		put 20 ballX;
+		put 12 ballY;
+		put 19 pballX;
+		put 11 pballY;
+		put 1 dballY;
+		mv dballX A OP_~;
+		mv RES A OP_+;
+		put 1 B;
+		mv RES dballX;
+		draw_ball;
+		mv 0 time_wo_loss;
+		put 2 ball_time;
+		put 48 score1;
+		put 48 score2;
+		print! str 371;
+		jump start;
+	};
+\
 //Init
 txt_clear_screen!;
+label start;
+print! welcome_str 298;
+print! welcome_instr 410;
+print! win_instr 573;
+print! name 893;
+ps2_clear_keys!;
+draw_ball;
+draw_padle padle1 1;
+draw_padle padle2 38;
+draw_scores;
+ps2_wait_for_key!;
+txt_clear_screen!;
+draw_ball;
+draw_padle padle1 1;
+draw_padle padle2 38;
+draw_scores;
+wait! 40;
+
 inf_loop! {
 
 	mv key_count B OP_>=;
@@ -227,25 +347,36 @@ inf_loop! {
 	};
 
 	mv move_count B OP_>=;
-	put 2 A;
+	mv ball_time A;
 	if_not! RES {
 		//Move ball
 		move_ball;
+		bounce_ball padle2 37;
+		bounce_ball padle1 2;
+		update_scores_and_ball;
 		put 0 move_count;
 	};
 
 	//Draw
 	clear_column 1;
-	draw_padle padle1 1;
 	clear_column 38;
-	draw_padle padle2 38;
 	draw_ball;
+	draw_padle padle1 1;
+	draw_padle padle2 38;
+	draw_scores;
+	//Speed up ball if needed
+	check_speed;
+	check_end score1 win1;
+	check_end score2 win2;
 	wait! 1;
 
 	inc move_count;
 	inc key_count;
+	inc time_wo_loss;
 };
 
+label ball_time;
+. 2;
 label move_count;
 . 0;
 
@@ -253,18 +384,20 @@ label key_count;
 . 0;
 
 //Memory Locations
+label time_wo_loss;
+. 0;
 label w_pressed;
 . 0;
 label s_pressed;
 . 0;
 label padle1;
-. 2;
+. 8;
 label up_pressed;
 . 0;
 label down_pressed;
 . 0;
 label padle2;
-. 11;
+. 8;
 label ballX;
 . 20;
 label ballY;
@@ -277,3 +410,27 @@ label dballX;
 . 1;
 label dballY;
 . 1;
+//Scores in ASCII - 48 is zero
+label score1;
+. 48;
+label score2;
+. 48;
+
+label welcome_str;
+#string
+Pong\
+label welcome_instr;
+#string
+Press a Key to Begin\
+label win1;
+#string
+Left Player Wins!\
+label win2;
+#string
+Right Player Wins!\
+label win_instr;
+#string
+First to 7 Wins\
+label name;
+#string
+Edward Wawrzynek\

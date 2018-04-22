@@ -6,7 +6,8 @@
 #include stdutil.asm\
 #include stdstruct.asm\
 
-#define SPEED_UP_TIME 200\
+#define SPEED_UP_TIME 250\
+#define 2SPEED_TIME 510\
 
 //Clear a column - used before padle draw
 #macro clear_column VAL col
@@ -279,6 +280,7 @@
 		mv RES dballX;
 		draw_ball;
 		mv 0 time_wo_loss;
+		mv 0 time_wo_2speed;
 		put 2 ball_time;
 		draw_scores;
 		wait! 40;
@@ -290,6 +292,11 @@
 	put SPEED_UP_TIME B;
 	if! RES {
 		put 1 ball_time;
+	};
+	mv time_wo_2speed A OP_>;
+	put 2SPEED_TIME B;
+	if! RES {
+		put 0 ball_time;
 	};
 \
 
@@ -308,6 +315,7 @@
 		mv RES dballX;
 		draw_ball;
 		mv 0 time_wo_loss;
+		mv 0 time_wo_2speed;
 		put 2 ball_time;
 		put 48 score1;
 		put 48 score2;
@@ -374,6 +382,7 @@ inf_loop! {
 	inc move_count;
 	inc key_count;
 	inc time_wo_loss;
+	inc time_wo_2speed;
 };
 
 label ball_time;
@@ -386,6 +395,8 @@ label key_count;
 
 //Memory Locations
 label time_wo_loss;
+. 0;
+label time_wo_2speed;
 . 0;
 label w_pressed;
 . 0;

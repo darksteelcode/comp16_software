@@ -2,7 +2,7 @@
  * clear screen, print string, blink char
  */
 #include std.asm\
-
+/*
 prb AX 0;
 pra AX 0;
 label clear;
@@ -22,7 +22,7 @@ mov RES CND;
 
 prb CR clear;
 jpc CR clear;
-
+*/
 prb AX 0;
 pra AX 0;
 label string_print;

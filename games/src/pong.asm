@@ -6,8 +6,8 @@
 #include stdutil.asm\
 #include stdstruct.asm\
 
-#define SPEED_UP_TIME 250\
-#define 2SPEED_TIME 510\
+#define SPEED_UP_TIME 200\
+#define 2SPEED_TIME 420\
 
 //Clear a column - used before padle draw
 #macro clear_column VAL col
@@ -329,12 +329,12 @@ label start;
 print! welcome_str 298;
 print! welcome_instr 410;
 print! win_instr 573;
-print! name 893;
-ps2_clear_keys!;
+print! name 892;
 draw_ball;
 draw_padle padle1 1;
 draw_padle padle2 38;
 draw_scores;
+ps2_clear_keys!;
 ps2_wait_for_key!;
 txt_clear_screen!;
 draw_ball;

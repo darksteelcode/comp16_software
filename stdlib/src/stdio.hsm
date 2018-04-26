@@ -26,7 +26,13 @@ func print_scroll {
 /* Print a char and format \t (0x09 - tab), \n (0x0a - newline), and \b (0x08 - backspace)
 only actually output a value if the ascii value is >= 0x20*/
 func print_char $char {
-	mv $char AX;
+  	//If !(1000 > print_SCREEN_POS), print a newline
+  	mv print_SCREEN_POS B OP_>;
+	put 1000 A;
+  	if_not! RES {
+		call print_scroll;
+	};
+  	mv $char AX;
 	//If (!(20 > char)), print the char - it will not be a special char
 	mv AX B OP_>;
 	put 0x20 A;
@@ -78,3 +84,32 @@ func print $string {
 		jump print_LOOP_START;
 	};
 };
+
+func print_hex $num {
+	mv $num EX;
+  	put 0xf000 FX;
+  	put 12 DX;
+  	for! CX 0 4 {
+	  	//Get each char: ($num & FX) >> DX
+		mv EX A OP_&;
+	  	mv FX B OP_&;
+	  	mv RES A OP_>>;
+	  	mv DX B OP_>>;
+	  	mv RES A OP_+;
+	  	put print_hex_CHARS B OP_+;
+	  	mv RES MAR;
+	  	call print_char MDR;
+
+	  	mv DX A OP_-;
+	  	put 4 B;
+	  	mv RES DX;
+
+	  	mv FX A OP_>>;
+	  	put 4 B;
+	  	mv RES FX;
+
+	};
+};
+
+#string print_hex_CHARS
+0123456789abcdef\

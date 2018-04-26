@@ -3,21 +3,16 @@
 #include stdio.hsm\
 
 label PRGM_START;
-/*
-call print_char 'a';
-call print_char 'b';
-call print_char '\n';
-call print_char 'c';
-call print_char '\t';
-call print_char 'd';
-call print_char '\b';
-call print_char 'e';
-*/
-call print &str;
+inf_loop! {
+  	call print_char ' ';
+	mv mem_loc MAR;
+  	call print_hex MDR;
+
+  	inc mem_loc;
+  	wait! 1;
+};
 hang!;
 
-#string str
-Hello
-	Write\
-
+label mem_loc;
+. 0;
 

@@ -4,10 +4,9 @@
 
 label PRGM_START;
 inf_loop! {
-  	call print_char ' ';
 	mv mem_loc MAR;
   	call print_hex MDR;
-
+	call print_char ' ';
   	inc mem_loc;
   	wait! 1;
 };

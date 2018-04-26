@@ -10,9 +10,9 @@ func print_scroll {
 	put 40 BX;
 	for! AX 0 960 {
 		out BX GFX_TXT_ADDR;
-		in CX GFX_TXT_DATA;
+		in CR GFX_TXT_DATA;
 		out AX GFX_TXT_ADDR;
-		out CX GFX_TXT_DATA;
+		out CR GFX_TXT_DATA;
 		inc BX;
 	};
 	put 960 print_SCREEN_POS;

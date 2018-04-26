@@ -1,6 +1,8 @@
 #include std.asm\
 #include stdtime.asm\
 
+label PRGM_START;
+
 put 0xff00 SP;
 
 call do_some_recurse 0 40 1;

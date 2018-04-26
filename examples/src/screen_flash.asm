@@ -1,6 +1,8 @@
 #include std.asm\
 #include stdtime.asm\
 
+label PRGM_START;
+
 #macro fill_screen! ANY char
 	put 0 AX;
 	mv char BX;

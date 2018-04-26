@@ -1,3 +1,11 @@
+/* Standard Program Header - important for programs that include libraries with funs in them
+ * darksteelcode
+ */
+
+#macro STD_HEADER
+	prb CR PRGM_START;
+	jmp CR PRGM_START;
+\
 /* Standard Language ALU operations - darksteelcode
  * standard alu ops
  */

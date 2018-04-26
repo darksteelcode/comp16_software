@@ -3,6 +3,8 @@
  */
 #include std.asm\
 
+label PRGM_START;
+
 prb BX 0;
 pra BX 0;
 label start;

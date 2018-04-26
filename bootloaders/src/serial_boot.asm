@@ -2,6 +2,8 @@
  * This program sits at 0xff00, and copies data from the serial port into memory, then jumps to 0x000 when reciving 0x0abc followed by 0x0123 (This will be changed to be more unique)
  */
 #include std.asm\
+
+label PRGM_START;
 //Register Usage - AX - Addr in memory to currently write to, BX - current instr being loaded
 label mem_start;
 //Program is at 0xff00

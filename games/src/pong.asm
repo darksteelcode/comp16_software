@@ -5,6 +5,8 @@
 #include std.asm\
 #include stdtime.asm\
 
+label PRGM_START;
+
 #define SPEED_UP_TIME 200\
 #define 2SPEED_TIME 420\
 

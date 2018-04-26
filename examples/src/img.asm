@@ -3,6 +3,7 @@
  */
 #include std.asm\
 
+label PRGM_START;
 prb AX 0;
 pra AX 0;
 label print1;

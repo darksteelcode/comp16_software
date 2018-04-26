@@ -1,5 +1,4 @@
 #include stdlang.asm\
-#include stdops.asm\
 
 //Hang the program
 #macro hang!

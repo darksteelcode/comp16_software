@@ -1,5 +1,5 @@
 #include std.asm\
-#include stdutil.asm\
+#include stdtime.asm\
 
 label start;
 put 0xffff AX;

@@ -3,8 +3,7 @@
  */
 
 #include std.asm\
-#include stdutil.asm\
-#include stdstruct.asm\
+#include stdtime.asm\
 
 #define SPEED_UP_TIME 200\
 #define 2SPEED_TIME 420\

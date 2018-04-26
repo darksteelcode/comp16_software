@@ -1,6 +1,5 @@
 #include std.asm\
-#include stdutil.asm\
-#include stdstruct.asm\
+#include stdtime.asm\
 
 put 0xff00 SP;
 

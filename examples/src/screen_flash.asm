@@ -1,5 +1,5 @@
 #include std.asm\
-#include stdutil.asm\
+#include stdtime.asm\
 
 #macro fill_screen! ANY char
 	put 0 AX;

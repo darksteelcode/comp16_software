@@ -2,12 +2,25 @@
 #include stdstruct.asm\
 #include stdio.asm\
 
-//Printing Functions - print, print_char, print_signed, print_unsigned, print_hex, print_binary, print_clear
+//Printing Functions - print_scroll, print_char, print, print_signed, print_unsigned, print_hex, print_binary, print_clear
 
-/*Print a string, calling print_char on each character*/
-
-func print $string {
-
+//Scroll the text in gfx txt mem up a line
+func print_scroll {
+	//For each charater in 0 to 960 (lines 0 - 23), set it equal to char at +40
+	put 40 BX;
+	for! AX 0 960 {
+		out BX GFX_TXT_ADDR;
+		in CX GFX_TXT_DATA;
+		out AX GFX_TXT_ADDR;
+		out CX GFX_TXT_DATA;
+		inc BX;
+	};
+	put 960 print_SCREEN_POS;
+	put 0 BX;
+	for! AX 960 1000 {
+		out AX GFX_TXT_ADDR;
+		out BX GFX_TXT_DATA;
+	};
 };
 
 /* Print a char and format \t (0x09 - tab), \n (0x0a - newline), and \b (0x08 - backspace)
@@ -22,8 +35,46 @@ func print_char $char {
 		out BX GFX_TXT_ADDR;
 		out AX GFX_TXT_DATA;
 		inc print_SCREEN_POS;
+		ret 1;
+	};
+	//If (!($char-0x0a)), call print_scroll
+	mv AX A OP_-;
+	put 0x0a B;
+	if_not! RES {
+		call print_scroll;
+		ret 1;
+	};
+	//If (!($char-0x09)), advance print_SCREEN_POS to +8
+	mv AX A OP_-;
+	put 0x09 B;
+	if_not! RES {
+		mv print_SCREEN_POS A OP_+;
+		put 8 B;
+		mv RES print_SCREEN_POS;
+		ret 1;
+	};
+	//If (!($char-0x08)), dec print_SCREEN_POS
+	mv AX A OP_-;
+	put 0x08 B;
+	if_not! RES {
+		dec print_SCREEN_POS;
+		ret 1;
 	};
 };
 //Start at the bottom left of the screen
 label print_SCREEN_POS;
 . 960;
+
+/*Print a string, calling print_char on each character -$string is a pointer to string*/
+
+func print $string {
+	mv $string DX;
+	label print_LOOP_START;
+	mv DX MAR;
+	out 0 MDR;
+	if! MDR {
+		call print_char MDR;
+		inc DX;
+		jump print_LOOP_START;
+	};
+};

@@ -1,7 +1,8 @@
 /* Serial Bootloader - darksteelcode - This program is close to operations, but slight improvements to the macro engine is needed, and this prgram, as it is, will try to write over itself
  * This program sits at 0xff00, and copies data from the serial port into memory, then jumps to 0x000 when reciving 0x0abc followed by 0x0123 (This will be changed to be more unique)
  */
-#include std.asm\
+#include stdlang.asm\
+#include stdio.asm\
 
 label PRGM_START;
 //Register Usage - AX - Addr in memory to currently write to, BX - current instr being loaded

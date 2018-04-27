@@ -3,6 +3,7 @@
 #include stdio.hsm\
 
 label PRGM_START;
+put 0xf000 SP;
 inf_loop! {
 	mv mem_loc MAR;
   	call print_hex MDR;

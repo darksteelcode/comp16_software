@@ -85,3 +85,17 @@
 	mv RES CND;
 	jumpc MACROID0;
 \
+
+#macro serial_wait_for_data!
+	label MACROID0;
+	in A SERIAL_IN_WAITING;
+	mov CR CR OP_NOT;
+	mov RES CND;
+	jumpc MACROID0;
+\
+
+#macro serial_wait_for_we_clear!
+	label MACROID0;
+	in CND SERIAL_TX_BUSY;
+	jumpc MACROID0;
+\

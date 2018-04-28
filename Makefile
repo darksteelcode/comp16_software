@@ -1,5 +1,5 @@
 .PHONY: all
-all: bootloaders examples tests games
+all: bootloaders examples tests games shells
 .PHONY:	games
 games:
 	./build games
@@ -12,6 +12,9 @@ tests:
 .PHONY: examples
 examples:
 	./build examples
+.PHONY: shells
+shells:
+	./build shells
 install:
 	sudo mkdir -p /usr/c16_include
 	sudo ln -sf `pwd`/stdlib/src/* /usr/c16_include/

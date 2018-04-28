@@ -60,11 +60,15 @@ func print_char $char {
 		mv RES print_SCREEN_POS;
 		ret 1;
 	};
-	//If (!($char-0x08)), dec print_SCREEN_POS
+	//If (!($char-0x08)), dec print_SCREEN_POS, and clear last char
 	mv AX A OP_-;
 	put 0x08 B;
 	if_not! RES {
 		dec print_SCREEN_POS;
+		mv print_SCREEN_POS A;
+		out A GFX_TXT_ADDR;
+		put 0 A;
+		out A GFX_TXT_DATA;
 		ret 1;
 	};
 };
@@ -173,20 +177,69 @@ func key_input {
 	put 0x10 B;
 	if_not! RES {
 		put 1 key_input_SHIFTED;
-		ret 1;
+		jump key_input_START;
 	};
 	mv CX A OP_-;
 	put 0x8010 B;
 	if_not! RES {
 		put 0 key_input_SHIFTED;
-		ret 1;
+		jump key_input_SHIFTED;
 	};
+	//Apply backspace press, print backspace, dec key_input_CUR_POS
+	//Only apply backspaces if key_input_CUR_POS is > 0
+	mv CX A OP_-;
+	put 0x08 B;
+	if_not! RES {
+		//Only apply if current position is > 0
+		mv key_input_CUR_POS B OP_>=;
+		put 0 A;
+		if_not! RES {
+			call print_char 0x08;
+			dec key_input_CUR_POS;
+
+			mv key_input_CUR_POS A OP_+;
+			put key_input_BUFFER B;
+			mv RES A;
+			put 0x0 B;
+			mv A MAR;
+			mv B MDR;
+		};
+		jump key_input_START;
+	};
+	//Apply tabs - convert tabs to eight spaces, and write to buffer
+	mv CX A OP_-;
+	put 0x09 B;
+	if_not! RES {
+		call print_char 0x09;
+		//CX can be used because a jump back to loop start will be performed
+		for! CX 0 8 {
+			mv key_input_CUR_POS A OP_+;
+			put key_input_BUFFER B;
+			mv RES A;
+			put 0x20 B;
+			mv A MAR;
+			mv B MDR;
+			inc key_input_CUR_POS;
+		};
+		jump key_input_START;
+	};
+	//If the key is a release, go to the start of the loop, and don't do anything with it
+	mv CX A OP_&;
+	put 0b0000000100000000 B;
+	mv RES CND;
+	jumpc key_input_START;
+
+	//If the key is above 32, print it and add it to key_input_BUFFER
+	mv CX A OP_>;
 };
 
 label key_input_SHIFTED;
 . 0;
 
+label key_input_CUR_POS;
+. 0;
+
 label key_input_BUFFER;
-#repeat 256
+#repeat 1024
 . 0;
 \

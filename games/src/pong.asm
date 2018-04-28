@@ -120,7 +120,7 @@ label PRGM_START;
 
 	// W and S 87 is w, 83 is s
 	mv CR CR OP_-;
-	put 38 B;
+	put KEY_UP B;
 	jumpc RES MACROID5;
 
 		//If w, do the following
@@ -129,7 +129,7 @@ label PRGM_START;
 
 	label MACROID5;
 	mv CR CR OP_-;
-	put 40 B;
+	put KEY_DOWN B;
 	jumpc RES MACROID6;
 
 		//If s, do the following
@@ -138,7 +138,7 @@ label PRGM_START;
 	//343 is w released, 339 is s released
 	label MACROID6;
 	mv CR CR OP_-;
-	put 294 B;
+	put KEY_UP_RELEASE B;
 	jumpc RES MACROID7;
 
 		//If w released, do the following
@@ -146,7 +146,7 @@ label PRGM_START;
 
 	label MACROID7;
 	mv CR CR OP_-;
-	put 296 B;
+	put KEY_DOWN_RELEASE B;
 	jumpc RES MACROID8;
 
 		//If s released, do the following

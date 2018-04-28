@@ -3,6 +3,13 @@
 #include stdio.hsm\
 
 label PRGM_START;
+call print_char '>';
+call print_char '$';
+call key_input;
+
+put 0xffff A;
+out A 0;
+hang!;
 /*
 inf_loop! {
 	call print_char ' ';

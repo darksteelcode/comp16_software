@@ -27,6 +27,29 @@
 //This port contains a bit, that when high, indicates that the uart is still sending data. If low, the uart is not busy, and data can be sent
 #define SERIAL_TX_BUSY 4\
 
+//Key code definitions - ascii unless specified below
+#define KEY_F1 11\
+#define KEY_F2 12\
+#define KEY_F3 13\
+#define KEY_F4 14\
+#define KEY_F5 15\
+#define KEY_F6 19\
+#define KEY_F7 20\
+#define KEY_F8 21\
+#define KEY_F9 22\
+#define KEY_F10 23\
+#define KEY_F11 24\
+#define KEY_F12 25\
+
+#define KEY_LEFT 28\
+#define KEY_UP 29\
+#define KEY_RIGHT 30\
+#define KEY_DOWN 31\
+
+#define KEY_LEFT_RELEASE 0x011c\
+#define KEY_UP_RELEASE 0x011d\
+#define KEY_RIGHT_RELEASE 0x011e\
+#define KEY_DOWN_RELEASE 0x011f\
 
 //Printing macros
 

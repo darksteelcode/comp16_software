@@ -159,11 +159,24 @@ func print_clear {
 };
 
 //Keyboard Entry Functions key_input
-//key_input puts a pointer to a buffer (static now, malloc'd latter) that contains the string
+//key_input puts a pointer to a buffer (static now, malloc'd latter) that contains the string in BP
 
 //Uses AX BX (print_char) CX
 func key_input {
+	//Init variables
+	put 0 key_input_CUR_POS;
+	put 0 key_input_SHIFTED;
+	//Clear buffer
+	for! CX 0 256 {
+		mv CX A OP_+;
+		put key_input_BUFFER B;
+		mv RES MAR;
+		put 0 A;
+		mv A MDR;
+	};
 	label key_input_START;
+	call print_char 219;
+	dec print_SCREEN_POS;
 	in A KEY_IN_WAITING;
 	mv CR CR OP_NOT;
 	mv RES CND;
@@ -171,7 +184,17 @@ func key_input {
 
 	in CX KEY_DATA;
 	out CX KEY_NEXT;
-
+	//If return is pressed, return, and pass pointer to buffer in BP
+	mv CX A OP_-;
+	put 0x0a B;
+	if_not! RES {
+		//Clear box
+		call print_char ' ';
+		//Newline
+		call print_char '\n';
+		put key_input_BUFFER BP;
+		ret 0;
+	};
 	//Apply shift keys to key_input_SHIFTED
 	mv CX A OP_-;
 	put 0x10 B;
@@ -194,6 +217,10 @@ func key_input {
 		mv key_input_CUR_POS B OP_>=;
 		put 0 A;
 		if_not! RES {
+			//Clear box
+			call print_char 32;
+			//Delete twice - box space and char
+			call print_char 0x08;
 			call print_char 0x08;
 			dec key_input_CUR_POS;
 
@@ -210,9 +237,9 @@ func key_input {
 	mv CX A OP_-;
 	put 0x09 B;
 	if_not! RES {
-		call print_char 0x09;
 		//CX can be used because a jump back to loop start will be performed
 		for! CX 0 8 {
+			call print_char 32;
 			mv key_input_CUR_POS A OP_+;
 			put key_input_BUFFER B;
 			mv RES A;
@@ -271,5 +298,5 @@ label key_input_CHARSET_SHIFTED;
  !"#$%&"()*+<_>?)!@#$%^&*(::<+>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ{|}^_~ABCDEFGHIJKLMNOPQRSTUVWXYZ{|}~\
 
 label key_input_BUFFER;
-#repeat 1024
+#repeat 256
 . 0;\

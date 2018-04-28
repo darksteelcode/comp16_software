@@ -3,13 +3,19 @@
 #include stdio.hsm\
 
 label PRGM_START;
+call print_char '\n';
 call print_char '>';
 call print_char ' ';
 call key_input;
+mv BP return_val;
+call print &str;
+call print return_val;
 
-put 0xffff A;
-out A 0;
-hang!;
+jump PRGM_START;
+label return_val;
+. 0;
+#string str
+You entered \
 /*
 inf_loop! {
 	call print_char ' ';

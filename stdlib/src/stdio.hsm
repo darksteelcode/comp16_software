@@ -153,3 +153,40 @@ func print_clear {
 		out BX GFX_TXT_DATA;
 	};
 };
+
+//Keyboard Entry Functions key_input
+//key_input puts a pointer to a buffer (static now, malloc'd latter) that contains the string
+
+//Uses AX BX (print_char) CX
+func key_input {
+	label key_input_START;
+	in A KEY_IN_WAITING;
+	mv CR CR OP_NOT;
+	mv RES CND;
+	jumpc key_input_START;
+
+	in CX KEY_DATA;
+	out CX KEY_NEXT;
+
+	//Apply shift keys to key_input_SHIFTED
+	mv CX A OP_-;
+	put 0x10 B;
+	if_not! RES {
+		put 1 key_input_SHIFTED;
+		ret 1;
+	};
+	mv CX A OP_-;
+	put 0x8010 B;
+	if_not! RES {
+		put 0 key_input_SHIFTED;
+		ret 1;
+	};
+};
+
+label key_input_SHIFTED;
+. 0;
+
+label key_input_BUFFER;
+#repeat 256
+. 0;
+\

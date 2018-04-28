@@ -3,6 +3,7 @@
 #include stdio.hsm\
 
 label PRGM_START;
+/*
 inf_loop! {
 	call print_char ' ';
 	call print_char ' ';
@@ -26,3 +27,4 @@ label mem_loc;
 This is some long text that is going way past one screen and is very long
 Hey! A newline with ta	bs and more tab 	s
 Hello\
+ */

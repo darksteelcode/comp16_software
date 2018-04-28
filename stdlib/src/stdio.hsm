@@ -2,9 +2,9 @@
 #include stdstruct.asm\
 #include stdio.asm\
 
-//Printing Functions - print_scroll, print_char, print, print_signed, print_unsigned, print_hex, print_binary, print_clear
+//Printing Functions - print_scroll, print_char, print, print_hex, print_binary, print_signed, print_unsigned, print_clear,
 
-//Scroll the text in gfx txt mem up a line
+//Scroll the text in gfx txt mem up a line USES AX BX
 func print_scroll {
 	//For each charater in 0 to 960 (lines 0 - 23), set it equal to char at +40
 	put 40 BX;
@@ -25,6 +25,7 @@ func print_scroll {
 
 /* Print a char and format \t (0x09 - tab), \n (0x0a - newline), and \b (0x08 - backspace)
 only actually output a value if the ascii value is >= 0x20*/
+//USES AX BX
 func print_char $char {
   	//If !(1000 > print_SCREEN_POS), print a newline
   	mv print_SCREEN_POS B OP_>;
@@ -72,19 +73,19 @@ label print_SCREEN_POS;
 . 960;
 
 /*Print a string, calling print_char on each character -$string is a pointer to string*/
-
+//USES AX BX CX
 func print $string {
-	mv $string DX;
+	mv $string CX;
 	label print_LOOP_START;
-	mv DX MAR;
+	mv CX MAR;
 	out 0 MDR;
 	if! MDR {
 		call print_char MDR;
-		inc DX;
+		inc CX;
 		jump print_LOOP_START;
 	};
 };
-
+//USES AX BX CX DX EX FX
 func print_hex $num {
 	mv $num EX;
   	put 0xf000 FX;
@@ -113,3 +114,33 @@ func print_hex $num {
 
 #string print_hex_CHARS
 0123456789abcdef\
+
+//USES AX BX CX DX EX FX
+func print_binary $num {
+	mv $num EX;
+  	put 0b1000000000000000 FX;
+  	put 15 DX;
+  	for! CX 0 16 {
+	  	//Get each char: ($num & FX) >> DX
+		mv EX A OP_&;
+	  	mv FX B OP_&;
+	  	mv RES A OP_>>;
+	  	mv DX B OP_>>;
+	  	mv RES A OP_+;
+	  	put print_binary_CHARS B OP_+;
+	  	mv RES MAR;
+	  	call print_char MDR;
+
+	  	mv DX A OP_-;
+	  	put 1 B;
+	  	mv RES DX;
+
+	  	mv FX A OP_>>;
+	  	put 1 B;
+	  	mv RES FX;
+
+	};
+};
+
+#string print_binary_CHARS
+01\

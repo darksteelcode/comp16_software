@@ -34,8 +34,8 @@ label init;
 	pra AX 0;
 
 	//Init SP - programs may expect this to be set
-	pra SP 0xf000;
-	prb SP 0xf000;
+	pra SP 0xfeff;
+	prb SP 0xfeff;
 
 	label clear_screen;
 		prb CR ' ';

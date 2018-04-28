@@ -3,12 +3,16 @@
 #include stdio.hsm\
 
 label PRGM_START;
-put 0xf000 SP;
+call print &str;
+hang!;
 inf_loop! {
-	mv mem_loc MAR;
-  	call print_hex MDR;
 	call print_char ' ';
+	call print_char ' ';
+	mv mem_loc MAR;
+  	call print_binary MDR;
   	inc mem_loc;
+	call print_char ' ';
+	call print_char ' ';
   	wait! 1;
 };
 hang!;
@@ -16,3 +20,7 @@ hang!;
 label mem_loc;
 . 0;
 
+#string str
+This is some long text that is going way past one screen and is very long
+Hey! A newline with ta	bs and more tab 	s
+Hello\

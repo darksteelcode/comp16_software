@@ -3,8 +3,6 @@
 #include stdio.hsm\
 
 label PRGM_START;
-call print &str;
-hang!;
 inf_loop! {
 	call print_char ' ';
 	call print_char ' ';
@@ -14,6 +12,10 @@ inf_loop! {
 	call print_char ' ';
 	call print_char ' ';
   	wait! 1;
+	in A KEY_IN_WAITING;
+	if! A {
+		call print_clear;
+	};
 };
 hang!;
 

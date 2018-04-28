@@ -180,10 +180,10 @@ func key_input {
 		jump key_input_START;
 	};
 	mv CX A OP_-;
-	put 0x8010 B;
+	put 0x0110 B;
 	if_not! RES {
 		put 0 key_input_SHIFTED;
-		jump key_input_SHIFTED;
+		jump key_input_START;
 	};
 	//Apply backspace press, print backspace, dec key_input_CUR_POS
 	//Only apply backspaces if key_input_CUR_POS is > 0
@@ -229,8 +229,34 @@ func key_input {
 	mv RES CND;
 	jumpc key_input_START;
 
-	//If the key is above 32, print it and add it to key_input_BUFFER
-	mv CX A OP_>;
+	//If the key is below 32 and hasn't been dealt with, go to start of loop
+	mv CX B OP_>;
+	put 32 A;
+	mv RES CND;
+	jumpc key_input_START;
+
+	//Print the key, and add it to key_input_BUFFER
+	//If shifted, put the shifted char in CX
+	mv key_input_SHIFTED A OP_NOT;
+	if_not! RES {
+		//Subtract 32 to get offset in shifted charset
+		mv CX A OP_-;
+		put 32 B;
+		mv RES A OP_+;
+		put key_input_CHARSET_SHIFTED B;
+		mv RES MAR;
+		mv MDR CX;
+	};
+	//print and add char in CX
+	mv key_input_CUR_POS A OP_+;
+	put key_input_BUFFER B;
+	mv RES MAR;
+	mv CX MDR;
+	inc key_input_CUR_POS;
+	call print_char CX;
+
+	jump key_input_START;
+
 };
 
 label key_input_SHIFTED;
@@ -239,7 +265,11 @@ label key_input_SHIFTED;
 label key_input_CUR_POS;
 . 0;
 
+// backslash has to be a data point or else it ends the
+label key_input_CHARSET_SHIFTED;
+#string
+ !"#$%&"()*+<_>?)!@#$%^&*(::<+>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ{|}^_~ABCDEFGHIJKLMNOPQRSTUVWXYZ{|}~\
+
 label key_input_BUFFER;
 #repeat 1024
-. 0;
-\
+. 0;\

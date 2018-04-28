@@ -4,7 +4,7 @@
 
 label PRGM_START;
 call print_char '>';
-call print_char '$';
+call print_char ' ';
 call key_input;
 
 put 0xffff A;

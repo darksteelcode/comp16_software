@@ -1,3 +1,3 @@
 label start;
 prb CR start;
-jmp start;
+jmp CR start;

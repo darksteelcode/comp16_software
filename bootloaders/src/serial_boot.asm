@@ -4,7 +4,7 @@
 #include stdlang.asm\
 #include stdio.asm\
 
-label PRGM_START;
+//label PRGM_START;
 //Register Usage - AX - Addr in memory to currently write to, BX - current instr being loaded
 label mem_start;
 //Program is at 0xff00
@@ -81,7 +81,7 @@ prb CR key_wait;
 jpc CR key_wait;
 
 in A KEY_DATA;
-out A KEY_DATA;
+out A KEY_NEXT;
 mov CR CR OP_&;
 prb B 0x00ff;
 pra B 0x00ff;
@@ -174,4 +174,4 @@ jmp CR mem_start;
 
 label string;
 #string
-Comp16 Bootloader                       Esc-Serial\
+Comp16 Bootloader   Esc-Serial\

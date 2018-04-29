@@ -188,6 +188,20 @@ $ \
 No such loaded prgm: \
 //Space for shell programs - just some basic demos
 
+//reset command
+. 0x0fff;
+#string
+reset\
+call print_clear;
+jump PRGM_START;
+
+//bootloader command
+. 0x0fff;
+#string
+bootloader\
+prb CR 0xff00;
+jmp CR 0xff00;
+
 //random command - print a random number in hex
 . 0x0fff;
 #string
@@ -270,3 +284,9 @@ pong\
 #string
 colors\
 #include shells/src/rom_shell_asms/flash.asm\
+
+//random text
+. 0x0fff;
+#string
+txt_rand\
+#include shells/src/rom_shell_asms/txt_rand.asm\

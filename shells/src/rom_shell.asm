@@ -1,5 +1,5 @@
 #include std.asm\
-#include stdio.hsm\
+#include stdio.sasm\
 #include stdtime.asm\
 
 label PRGM_START;

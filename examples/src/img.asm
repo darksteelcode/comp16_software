@@ -2,6 +2,7 @@
  * Dispay an image using block chars
  */
 #include std.asm\
+#include stdio.c16\
 
 label PRGM_START;
 prb AX 0;

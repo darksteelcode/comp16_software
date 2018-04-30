@@ -16,7 +16,9 @@ examples:
 shells:
 	./build shells
 install:
-	sudo mkdir -p /usr/c16_include
-	sudo ln -sf `pwd`/stdlib/src/* /usr/c16_include/
+	sudo mkdir -p /usr/local/c16_include
+	sudo touch /usr/local/c16_include/dummy.txt
+	sudo rm /usr/local/c16_include/*
+	sudo ln -sf `pwd`/stdlib/src/* /usr/local/c16_include/
 clean:
 	rm -f */bin/*

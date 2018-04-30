@@ -2,6 +2,7 @@
  * Put key presses on the screen - no formating
  */
 #include std.asm\
+#include stdio.c16\
 
 label PRGM_START;
 

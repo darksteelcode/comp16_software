@@ -1,5 +1,6 @@
 #include std.asm\
 #include stdtime.asm\
+#include stdio.c16\
 
 label PRGM_START;
 

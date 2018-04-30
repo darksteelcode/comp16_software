@@ -1,9 +1,10 @@
+//!INCLUDE_PLACE_AT_END
+
+//File contains functions that compile to code, so, if source is included, put it at the end of the binary
 #include stdlang.asm\
 #include stdstruct.asm\
 #include stdio.asm\
-
 //Printing Functions - print_scroll, print_char, print, print_hex, print_binary, print_signed, print_unsigned, print_clear,
-
 //Scroll the text in gfx txt mem up a line USES AX BX
 func print_scroll {
 	//For each charater in 0 to 960 (lines 0 - 23), set it equal to char at +40
@@ -316,8 +317,11 @@ func key_clear {
 
 	label key_clear_END;
 };
-
 //Waits for a key press
 func key_wait_for_press {
-
+	label key_wait_for_press_START;
+	in A KEY_IN_WAITING;
+	mv CR CR OP_NOT;
+	mv RES CND;
+	jumpc key_wait_for_press_START;
 };

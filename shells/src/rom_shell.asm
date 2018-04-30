@@ -1,9 +1,9 @@
 #include std.asm\
-#include stdio.sasm\
+#include stdio.c16\
 #include stdtime.asm\
 
-label PRGM_START;
 //Print boot stuff with slight delays for asthetics
+nop;
 call print &SHELL_boot_symbol;
 call print &SHELL_boot_msg;
 call SHELL_LOAD_PRGMS;
@@ -176,6 +176,7 @@ label SHELL_ADDRS;
  ##  ##  #  #  # ###  # #  #
                  #    #  ##
                  #
+
 \
 #string SHELL_boot_msg
 Comp16 ROM Shell - Edward Wawrzynek\
@@ -193,7 +194,8 @@ No such loaded prgm: \
 #string
 reset\
 call print_clear;
-jump PRGM_START;
+prb CR 0;
+jmp CR 0;
 
 //bootloader command
 . 0x0fff;

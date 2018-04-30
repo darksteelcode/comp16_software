@@ -1,0 +1,4 @@
+//This is the comp16 stdio file - as it is, it includes stdio definintions and macros (moving away from those), and functiosn
+//Later these functions will be linked to os rom
+#include stdio.asm\
+#include stdio.sasm\

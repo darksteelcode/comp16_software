@@ -2,6 +2,7 @@
  * Fill the screen with psuedo-random text
  */
 #include std.asm\
+#include stdio.c16\
 
 label PRGM_START;
 

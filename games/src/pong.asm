@@ -4,6 +4,7 @@
 
 #include std.asm\
 #include stdtime.asm\
+#include stdio.c16\
 label PRGM_START;
 
 #define SPEED_UP_TIME 200\

@@ -292,3 +292,11 @@ colors\
 #string
 txt_rand\
 #include shells/src/rom_shell_asms/txt_rand.asm\
+
+//exit cmd
+. 0x0fff;
+#string
+exit\
+call print_clear;
+label EXIT;
+jump EXIT;

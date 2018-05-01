@@ -1,6 +1,6 @@
 /* stdstruct.asm - Comp16 Standard Structure Programming Assembly File
  * Edward Wawrzynek
- * Used prefixes - inf_loop!, for!, if!, if_not!, if_else!, if_not_else!
+ * Used prefixes - inf_loop!, hang!, for!, if!, if_not!, if_else!, if_not_else!
  * --------
  * This file contains some structured programming macros
  * TODO: Better looping macros - whiles, dynamic for's, etc

@@ -2,19 +2,21 @@
 all: bootloaders examples tests games shells
 .PHONY:	games
 games:
-	./build games
+	./build.sh games
 .PHONY: bootloaders
 bootloaders:
-	./build bootloaders
+	./build.sh bootloaders
 .PHONY: tests
 tests:
-	./build tests
+	./build.sh tests
 .PHONY: examples
 examples:
-	./build examples
+	./build.sh examples
 .PHONY: shells
 shells:
-	./build shells
+	./build.sh shells
+test_stdlib:
+	./build_test_stdlib.sh
 install:
 	sudo mkdir -p /usr/local/c16_include
 	sudo touch /usr/local/c16_include/dummy.txt

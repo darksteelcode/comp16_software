@@ -1,7 +1,6 @@
 #!/bin/bash
 
 DIR=$1
-echo $DIR
 for file in $DIR/src/*.asm
 do
 name="${file##*/}"

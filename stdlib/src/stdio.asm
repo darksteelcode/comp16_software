@@ -1,8 +1,12 @@
-/* Standard Input/Output Functions - darksteelcode
- * These are a work in progress, and are NOT FIXED
+/* stdio.asm - Comp16 Standard Input / Output Assembly File
+ * Edward Wawrzynek
+ * Used prefixes - GFX_, KEY_, SERIAL_
+ * --------
+ * This file defines io ports and some key codes
+ * TODO: Get a better way to get key codes for released keys - (macro to add release code?)
  */
 
-#include stdlang.asm\
+#include std.asm\
 
 //Define IO Ports
 

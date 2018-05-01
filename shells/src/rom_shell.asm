@@ -2,6 +2,8 @@
 #include stdio.c16\
 #include stdtime.asm\
 
+#define IS_SHELL 1\
+
 //Print boot stuff with slight delays for asthetics
 nop;
 call print &SHELL_boot_symbol;
@@ -273,25 +275,25 @@ jump SHELL_RETURN;
 . 0x0fff;
 #string
 images\
-#include shells/src/rom_shell_asms/image.asm\
+#include examples/src/img.asm\
 
 //pong
 . 0x0fff;
 #string
 pong\
-#include shells/src/rom_shell_asms/pong.asm\
+#include games/src/pong.asm\
 
 //color flashing screen
 . 0x0fff;
 #string
 colors\
-#include shells/src/rom_shell_asms/flash.asm\
+#include examples/src/flash.asm\
 
 //random text
 . 0x0fff;
 #string
 txt_rand\
-#include shells/src/rom_shell_asms/txt_rand.asm\
+#include examples/src/txt_rand.asm\
 
 //exit cmd
 . 0x0fff;

@@ -1,5 +1,9 @@
-/* Standard Structure Programming Macros - darksteelcode
- * standard structure programming tools - work in progress
+/* stdstruct.asm - Comp16 Standard Structure Programming Assembly File
+ * Edward Wawrzynek
+ * Used prefixes - inf_loop!, for!, if!, if_not!
+ * --------
+ * This file contains some structured programming macros
+ * TODO: Better looping macros, as while as if-else's should be added
  */
 
 #include stdlang.asm\

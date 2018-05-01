@@ -1,3 +1,7 @@
+#include std.asm\
+#include stdio.c16\
+#include stdtime.asm\
+
 #macro fill_screen! ANY char
 	put 0 AX;
 	mv char BX;
@@ -32,6 +36,10 @@ if! RES {
 mv FX A OP_+;
 put 256 B;
 mv RES FX;
+
+#ifnotdef !IS_SHELL
+label SHELL_RETURN;
+\
 
 jump FLASH_start;
 

@@ -1,4 +1,12 @@
-/* Standard Language ALU operations - darksteelcode
+/* stdlang.asm - Comp16 Standard Language Assembly File
+ * Edward Wawrzynek
+ * Used prefixes - OP_, mv, put, jump, jumpc, inc, dec
+ * --------
+ * This file contains basic language definitions and macros
+ * TODO: NONE (add math macros beyond inc and dec?)
+ */
+
+/* Standard Language ALU operations
  * standard alu ops
  */
 //Operation Definitions
@@ -19,7 +27,7 @@
 #define OP_^ 14\
 
 
-/* Standard Language Macros - darksteelcode
+/* Standard Language Macros
  * macros mv, put, jump, jumpc, inc, and dec to abstract away weirdnesses with isa, and make writing macros for ANY types easier
  */
 

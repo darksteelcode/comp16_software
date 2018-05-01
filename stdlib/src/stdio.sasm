@@ -1,5 +1,3 @@
-//!INCLUDE_PLACE_AT_END
-
 /* stdio.sasm - Comp16 Standard Input / Output Source Assembly File
  * Edward Wawrzynek
  * Used prefixes - print_, key_, serial_
@@ -7,6 +5,8 @@
  * This file defines printing, keyboard input, and serial routines
  * TODO: print_unsigned, print_signed, and a key_ function for getting a single char formatted with shifts, etc, and add a seria library
  */
+
+//!INCLUDE_PLACE_AT_END
 
 #include stdlang.asm\
 #include stdstruct.asm\

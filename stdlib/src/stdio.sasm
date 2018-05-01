@@ -1,11 +1,21 @@
 //!INCLUDE_PLACE_AT_END
 
-//File contains functions that compile to code, so, if source is included, put it at the end of the binary
+/* stdio.sasm - Comp16 Standard Input / Output Source Assembly File
+ * Edward Wawrzynek
+ * Used prefixes - print_, key_, serial_
+ * --------
+ * This file defines printing, keyboard input, and serial routines
+ * TODO: print_unsigned, print_signed, and a key_ function for getting a single char formatted with shifts, etc, and add a seria library
+ */
+
 #include stdlang.asm\
 #include stdstruct.asm\
 #include stdio.asm\
-//Printing Functions - print_scroll, print_char, print, print_hex, print_binary, print_signed, print_unsigned, print_clear,
-//Scroll the text in gfx txt mem up a line USES AX BX
+
+//Printing Functions - print_scroll, print_char, print, print_hex, print_binary, print_signed, print_unsigned, print_clear, print_at
+
+//Scroll the text in gfx txt mem up a line
+//USES AX BX
 func print_scroll {
 	//For each charater in 0 to 960 (lines 0 - 23), set it equal to char at +40
 	put 40 BX;
@@ -24,8 +34,7 @@ func print_scroll {
 	};
 };
 
-/* Print a char and format \t (0x09 - tab), \n (0x0a - newline), and \b (0x08 - backspace)
-only actually output a value if the ascii value is >= 0x20*/
+//Print a char and format \t (0x09 - tab), \n (0x0a - newline), and \b (0x08 - backspace) only actually output a value if the ascii value is >= 0x20*/
 //USES AX BX
 func print_char $char {
   	//If !(1000 > print_SCREEN_POS), print a newline
@@ -77,7 +86,7 @@ func print_char $char {
 label print_SCREEN_POS;
 . 960;
 
-/*Print a string, calling print_char on each character -$string is a pointer to string*/
+//Print a string, calling print_char on each character -$string is a pointer to string
 //USES AX BX CX
 func print $string {
 	mv $string CX;
@@ -90,6 +99,8 @@ func print $string {
 		jump print_LOOP_START;
 	};
 };
+
+//Prints a hex value to the screen - no prefix, four chars
 //USES AX BX CX DX EX FX
 func print_hex $num {
 	mv $num EX;
@@ -120,6 +131,7 @@ func print_hex $num {
 #string print_hex_CHARS
 0123456789abcdef\
 
+//Prints a binary value - no prefix, 16 chars
 //USES AX BX CX DX EX FX
 func print_binary $num {
 	mv $num EX;
@@ -150,6 +162,7 @@ func print_binary $num {
 #string print_binary_CHARS
 01\
 
+//Clears the screen, resets cursor
 //Uses AX BX
 func print_clear {
 	put 0 BX;
@@ -157,12 +170,33 @@ func print_clear {
 		out AX GFX_TXT_ADDR;
 		out BX GFX_TXT_DATA;
 	};
+	put 960 print_SCREEN_POS;
 };
 
-//Keyboard Entry Functions key_input
+//Prints a string at a current position on the screen - legacy support from macro library, doesn't do formatting
+//Uses AX BX
+func print_at $string $pos {
+	mv $string AX;
+	mv $pos BX;
+	label print_at_LOOP;
+	mv AX MAR;
+	mv MDR A OP_NOT;
+	mv RES CND;
+	jumpc print_at_END;
+	out BX GFX_TXT_ADDR;
+	out MDR GFX_TXT_DATA;
+	inc AX;
+	inc BX;
+	jump print_at_LOOP;
+
+	label print_at_END;
+};
+
+//Keyboard Entry Functions key_input, key_clear, key_wait_for_press
+
 //key_input puts a pointer to a buffer (static now, malloc'd latter) that contains the string in BP
 
-//Uses AX BX (print_char) CX
+//Uses AX BX CX
 func key_input {
 	//Init variables
 	put 0 key_input_CUR_POS;
@@ -303,6 +337,7 @@ label key_input_BUFFER;
 . 0;\
 
 //Clears all keys in the key buffer
+//USES NONE
 func key_clear {
 	//If there are no keys, jump to the end
 	in A KEY_IN_WAITING;
@@ -318,6 +353,7 @@ func key_clear {
 	label key_clear_END;
 };
 //Waits for a key press
+//USES NONE
 func key_wait_for_press {
 	label key_wait_for_press_START;
 	in A KEY_IN_WAITING;

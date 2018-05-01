@@ -321,33 +321,32 @@
 		put 2 ball_time;
 		put 48 score1;
 		put 48 score2;
-		print! str 371;
+		call print_at &str 371;
 		jump start;
 	};
 \
 //Init
 init_vars!;
-txt_clear_screen!;
+call print_clear;
 label start;
-print! welcome_str 298;
-print! welcome_instr 410;
-print! win_instr 573;
-print! name 892;
+call print_at &welcome_str 298;
+call print_at &welcome_instr 410;
+call print_at &win_instr 573;
+call print_at &name 892;
 draw_ball;
 draw_padle padle1 1;
 draw_padle padle2 38;
 draw_scores;
 wait! 30;
-ps2_clear_keys!;
-ps2_wait_for_key!;
-txt_clear_screen!;
+call key_clear;
+call key_wait_for_press;
+call print_clear;
 draw_ball;
 draw_padle padle1 1;
 draw_padle padle2 38;
 draw_scores;
-ps2_clear_keys!;
+call key_clear;
 wait! 40;
-ps2_wait_for_key!;
 inf_loop! {
 
 	mv key_count B OP_>=;

@@ -2,10 +2,13 @@
  * A replication of the classic. It is made more as a demonstration that comp16 can run a half-usefull program, and that one can be programed without terrible pan
  */
 
+#ifnotdef !IS_SHELL
+label SHELL_RETURN;
+\
+
 #include std.asm\
-#include stdtime.asm\
 #include stdio.c16\
-label PRGM_START;
+#include stdtime.asm\
 
 #define SPEED_UP_TIME 200\
 #define 2SPEED_TIME 420\
@@ -155,7 +158,13 @@ label PRGM_START;
 	label MACROID8;
 
 
+	mv CR CR OP_-;
+	put 27 B;
+	jumpc RES MACROID9;
 
+		jump SHELL_RETURN;
+
+	label MACROID9;
 	in CND KEY_IN_WAITING;
 	jumpc MACROID0;
 
@@ -303,7 +312,7 @@ label PRGM_START;
 
 #macro check_end MEM score MEM str
 	mv score A OP_>;
-	put 54 B;
+	put 52 B;
 	if! RES {
 		put 20 ballX;
 		put 12 ballY;
@@ -320,30 +329,32 @@ label PRGM_START;
 		put 2 ball_time;
 		put 48 score1;
 		put 48 score2;
-		print! str 371;
+		call print_at &str 371;
 		jump start;
 	};
 \
 //Init
-txt_clear_screen!;
+init_vars!;
+call print_clear;
 label start;
-print! welcome_str 298;
-print! welcome_instr 410;
-print! win_instr 573;
-print! name 892;
+call print_at &welcome_str 298;
+call print_at &welcome_instr 410;
+call print_at &win_instr 573;
+call print_at &name 892;
 draw_ball;
 draw_padle padle1 1;
 draw_padle padle2 38;
 draw_scores;
-ps2_clear_keys!;
-ps2_wait_for_key!;
-txt_clear_screen!;
+wait! 30;
+call key_clear;
+call key_wait_for_press;
+call print_clear;
 draw_ball;
 draw_padle padle1 1;
 draw_padle padle2 38;
 draw_scores;
+call key_clear;
 wait! 40;
-
 inf_loop! {
 
 	mv key_count B OP_>=;
@@ -385,6 +396,28 @@ inf_loop! {
 	inc time_wo_loss;
 	inc time_wo_2speed;
 };
+
+#macro init_vars!
+	put 2 ball_time;
+	put 0 move_count;
+	put 0 key_count;
+	put 0 time_wo_loss;
+	put 0 time_wo_2speed;
+	put 0 w_pressed;
+	put 0 s_pressed;
+	put 0 up_pressed;
+	put 0 down_pressed;
+	put 8 padle1;
+	put 8 padle2;
+	put 20 ballX;
+	put 12 ballY;
+	put 19 pballX;
+	put 11 pballY;
+	put 1 dballX;
+	put 1 dballY;
+	put 48 score1;
+	put 48 score2;
+\
 
 label ball_time;
 . 2;
@@ -438,6 +471,6 @@ Left Player Wins!\
 #string win2
 Right Player Wins!\
 #string win_instr
-First to 7 Wins\
+First to 5 Wins\
 #string name
 Edward Wawrzynek\

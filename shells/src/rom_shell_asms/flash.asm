@@ -11,7 +11,7 @@
 		jumpc MACROID0;
 \
 wait! 20;
-ps2_clear_keys!;
+call key_clear;
 put 0 FLASH_cov;
 put 0x00db FX;
 label FLASH_start;

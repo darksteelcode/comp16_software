@@ -1,0 +1,10 @@
+/* stdtime.c16 - Comp16 Standard Time Include File
+ * Edward Wawrzynek
+ * Used prefixes - time_ (removing macros)
+ * --------
+ * Stdtime will change to be func based using hardware time - this just includes the files
+ * TODO: NONE (this will need to be linked to OS when needed, and changes to .asm and .sasm are needed)
+ */
+
+#include stdtime.asm\
+#include stdtime.sasm\

@@ -1,6 +1,6 @@
 #include std.asm\
 #include stdio.c16\
-#include stdtime.asm\
+#include stdtime.c16\
 
 #ifnotdef !IS_SHELL
 label SHELL_RETURN;

@@ -1,0 +1,14 @@
+/* stdtime.sasm - Comp16 Standard Time Source Assembley File
+ * Edward Wawrzynek
+ * Used prefixes - time_
+ * --------
+ * The time library is being changed, but this file will contain timing and delaying functions
+ * TODO: A hardware timer needs to be implemented in comp16, and function written
+ */
+
+//!INCLUDE_PLACE_AT_END
+
+func time_hang {
+	label time_hang_START;
+	jump time_hang_START;
+};

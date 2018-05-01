@@ -8,7 +8,7 @@ label SHELL_RETURN;
 
 #include std.asm\
 #include stdio.c16\
-#include stdtime.asm\
+#include stdtime.c16\
 
 #define SPEED_UP_TIME 200\
 #define 2SPEED_TIME 420\

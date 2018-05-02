@@ -35,6 +35,10 @@
 #define PRGM_ROM_ADDRS 14\
 #define PRGM_ROM_VAL 15\
 
+//Timer ports
+#define TIMEIO_MS 9\
+#define TIMEIO_S 10\
+
 //Key code definitions - ascii unless specified below
 #define KEY_F1 11\
 #define KEY_F2 12\

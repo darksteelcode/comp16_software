@@ -3,7 +3,7 @@
  * Used prefixes - print_, key_, serial_
  * --------
  * This file defines printing, keyboard input, and serial routines
- * TODO: print_unsigned, print_signed, and a key_ function for getting a single char formatted with shifts, etc, and add a seria library
+ * TODO: print_unsigned, print_signed, and a key_ function for getting a single char formatted with shifts, etc, and add a serial library
  */
 
 //!INCLUDE_PLACE_AT_END
@@ -98,6 +98,60 @@ func print $string {
 		inc CX;
 		jump print_LOOP_START;
 	};
+};
+
+//Prints and unsigned decimal number, using only as many chars as needed
+//USES AX BX (print_char) AX (Num), BX CX DX EX FX - bcd digits
+func print_unsigned $num {
+	mv $num AX;
+	//Put 0 in all regs for bcd
+	put 0 BX;
+	put 0 CX;
+	put 0 DX;
+	put 0 EX;
+	put 0 FX;
+	//Shift each reg one digit into the next (AX->BX, BX->CX) - NOTE: AX shifts digit at 15, the rest digit at 3
+	//Shift AX to BX
+	mv AX A OP_&;
+	put 0x8000 B;
+	//We now just have the bit to shift in
+	mv RES A OP_>>;
+	put 15 B;
+	//Using BP as tmp
+	mv RES BP;
+	//Shift AX left one, and | with BP
+	mv BX A OP_<<;
+	put 1 B;
+	mv RES A OP_|;
+	mv BP B OP_|;
+	//Move BX with overflow to BP for later operations
+	mv RES BP OP_|;
+	//BX And with 0x000f to get rid of overflow
+	mv RES A OP_&;
+	put 0x000f B;
+	mv RES BX;
+	//Shift AX left one
+	mv AX A OP_<<;
+	put 1 B;
+	mv RES AX;
+
+	//Shift BX to CX, and save CX with potentail shifts into bit 4 in BP, assuming shifted BX is in BP
+	//Get bit to shift into CX
+	mv BP A OP_>>;
+	put 4 B;
+	//tmp
+	mv RES BP;
+	//shift CX left
+	mv CX A OP_<<;
+	put 1 B;
+	//Or with BP, and save shift in BP
+	mv RES A OP_|;
+	mv BP B OP_|;
+	mv RES BP;
+	//And CX with ox000f to remove overflow
+	mv BP A OP_&;
+	put 0x000f B;
+	mv RES CX OP_&;
 };
 
 //Prints a hex value to the screen - no prefix, four chars
@@ -361,4 +415,3 @@ func key_wait_for_press {
 	mv RES CND;
 	jumpc key_wait_for_press_START;
 };
-//Function

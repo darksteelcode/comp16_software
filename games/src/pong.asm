@@ -389,7 +389,7 @@ inf_loop! {
 	check_speed;
 	check_end score1 win1;
 	check_end score2 win2;
-	call time_delay_ms 2;
+	call time_delay_ms 40;
 
 	inc move_count;
 	inc key_count;

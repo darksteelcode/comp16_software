@@ -2,8 +2,8 @@
  * Edward Wawrzynek
  * Used prefixes - time_
  * --------
- * The time library is being changed, but this file will contain timing and delaying functions
- * TODO: A hardware timer needs to be implemented in comp16, and function written
+ * The time library contains timing and delaying functions - no real time clock
+ * TODO: This is mostly complete, but may? need hour+minute formatting functions
  */
 
 //!INCLUDE_PLACE_AT_END

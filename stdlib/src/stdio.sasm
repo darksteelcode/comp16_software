@@ -100,59 +100,69 @@ func print $string {
 	};
 };
 
+#macro print_unsigned_ADD3IF4 REG reg VAL gc VAL add
+	mv reg A OP_>=;
+	put gc B;
+	if! RES {
+		mv reg A OP_+;
+	  	put add B;
+	  	mv RES reg;
+	};
+
+\
+
 //Prints and unsigned decimal number, using only as many chars as needed
-//USES AX BX (print_char) AX (Num), BX CX DX EX FX - bcd digits
+//USES AX BX (print_char) AX (Num), BX (main bcd), CX (additional bcd), DX (loop)
 func print_unsigned $num {
 	mv $num AX;
 	//Put 0 in all regs for bcd
 	put 0 BX;
 	put 0 CX;
-	put 0 DX;
-	put 0 EX;
-	put 0 FX;
-	//Shift each reg one digit into the next (AX->BX, BX->CX) - NOTE: AX shifts digit at 15, the rest digit at 3
-	//Shift AX to BX
-	mv AX A OP_&;
-	put 0x8000 B;
-	//We now just have the bit to shift in
-	mv RES A OP_>>;
-	put 15 B;
-	//Using BP as tmp
-	mv RES BP;
-	//Shift AX left one, and | with BP
-	mv BX A OP_<<;
-	put 1 B;
-	mv RES A OP_|;
-	mv BP B OP_|;
-	//Move BX with overflow to BP for later operations
-	mv RES BP OP_|;
-	//BX And with 0x000f to get rid of overflow
-	mv RES A OP_&;
-	put 0x000f B;
-	mv RES BX;
-	//Shift AX left one
-	mv AX A OP_<<;
-	put 1 B;
-	mv RES AX;
+  	for! FX 0 16 {
+		//Add 3 to all digits greater than 4
+		// This will be added later
+		print_unsigned_ADD3IF4 BX 0x0005 0x0003;
+	  	print_unsigned_ADD3IF4 BX 0x0050 0x0030;
+	  	print_unsigned_ADD3IF4 BX 0x0500 0x0300;
+	  	print_unsigned_ADD3IF4 BX 0x5000 0x3000;
+	  	print_unsigned_ADD3IF4 CX 0x0005 0x0003;
+		//Shift AX into BX, and BX into CX
+		//Shift CX left to pepare for shift-in from BX
+		mv CX A OP_<<;
+  		put 1 B;
+  		mv RES CX;
+  		//Shift BX right 15 to put bit 15 at bit 0, and | with CX
+		mv BX A OP_>>;
+  		put 15 B;
+  		mv RES A OP_|;
+  		mv CX B OP_|;
+  		mv RES CX;
+  		//Shift BX left one to prepare for shift-in from AX
+		mv BX A OP_<<;
+  		put 1 B;
+  		mv RES BX;
+  		//SHift AX right 15 to put bit 15 in bit 0, and | with BX
+		mv AX A OP_>>;
+  		put 15 B;
+  		mv RES A OP_|;
+  		mv BX B OP_|;
+  		mv RES BX;
+  		//Shift AX left one
+		mv AX A OP_<<;
+  		put 1 B;
+  		mv RES AX;
+	};
+	mv BX print_unsigned_TMP;
+  	call print_hex CX;
+  	call print_char ' ';
+  	mv print_unsigned_TMP AX;
+  	call print_hex AX;
 
-	//Shift BX to CX, and save CX with potentail shifts into bit 4 in BP, assuming shifted BX is in BP
-	//Get bit to shift into CX
-	mv BP A OP_>>;
-	put 4 B;
-	//tmp
-	mv RES BP;
-	//shift CX left
-	mv CX A OP_<<;
-	put 1 B;
-	//Or with BP, and save shift in BP
-	mv RES A OP_|;
-	mv BP B OP_|;
-	mv RES BP;
-	//And CX with ox000f to remove overflow
-	mv BP A OP_&;
-	put 0x000f B;
-	mv RES CX OP_&;
 };
+
+label print_unsigned_TMP;
+. 0;
+
 
 //Prints a hex value to the screen - no prefix, four chars
 //USES AX BX CX DX EX FX

@@ -100,8 +100,10 @@ func print $string {
 	};
 };
 
-#macro print_unsigned_ADD3IF4 REG reg VAL gc VAL add
-	mv reg A OP_>=;
+#macro print_unsigned_ADD3IF4 REG reg VAL gc VAL add VAL mask
+	mv reg A OP_&;
+	put mask B;
+	mv RES A OP_>=;
 	put gc B;
 	if! RES {
 		mv reg A OP_+;
@@ -121,11 +123,11 @@ func print_unsigned $num {
   	for! FX 0 16 {
 		//Add 3 to all digits greater than 4
 		// This will be added later
-		print_unsigned_ADD3IF4 BX 0x0005 0x0003;
-	  	print_unsigned_ADD3IF4 BX 0x0050 0x0030;
-	  	print_unsigned_ADD3IF4 BX 0x0500 0x0300;
-	  	print_unsigned_ADD3IF4 BX 0x5000 0x3000;
-	  	print_unsigned_ADD3IF4 CX 0x0005 0x0003;
+		print_unsigned_ADD3IF4 BX 0x0005 0x0003 0x000f;
+	  	print_unsigned_ADD3IF4 BX 0x0050 0x0030 0x00ff;
+	  	print_unsigned_ADD3IF4 BX 0x0500 0x0300 0x0fff;
+	  	print_unsigned_ADD3IF4 BX 0x5000 0x3000 0xffff;
+	  	print_unsigned_ADD3IF4 CX 0x0005 0x0003 0x000f;
 		//Shift AX into BX, and BX into CX
 		//Shift CX left to pepare for shift-in from BX
 		mv CX A OP_<<;
@@ -153,8 +155,7 @@ func print_unsigned $num {
   		mv RES AX;
 	};
 	mv BX print_unsigned_TMP;
-  	call print_hex CX;
-  	call print_char ' ';
+  	call print_char CX;
   	mv print_unsigned_TMP AX;
   	call print_hex AX;
 

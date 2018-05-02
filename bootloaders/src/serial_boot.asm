@@ -28,8 +28,6 @@ label init;
 
 	label key_clear_end;
 	//Clear Regs
-	pra BX 0;
-	prb BX 0;
 	prb AX 0;
 	pra AX 0;
 
@@ -85,19 +83,28 @@ out A KEY_NEXT;
 mov CR CR OP_&;
 prb B 0x00ff;
 pra B 0x00ff;
+mov RES BX;
 //Check for Esc
-mov RES A OP_==;
+mov BX A OP_==;
 prb B 27;
 pra B 27;
 mov RES CND;
 prb CR serial_start;
 jpc CR serial_start;
+//Check for F1
+mov BX A OP_==;
+prb B KEY_F1;
+pra B KEY_F1;
+mov RES CND;
+prb CR rom_start;
+jpc CR rom_start;
 
 //Wait for valid key
 prb CR key_wait;
 jmp CR key_wait;
 
 label serial_start;
+//Clear esc key
 //Wait until there is at least 2 bytes in waiting
 label wait_data_loop;
 	in B SERIAL_IN_WAITING;
@@ -143,6 +150,9 @@ label wait_data_loop;
 	prb CR prepare_for_jump;
 	jpc CR prepare_for_jump;
 
+//Output the word to port 0
+	out BX 0;
+
 //Put BX into memory, increment AX
 	mov AX MAR;
 	mov BX MDR;
@@ -159,6 +169,10 @@ label prepare_for_jump;
 
 prb AX 0;
 pra AX 0;
+
+//Clear port 0
+out AX 0;
+
 prb BX 0;
 pra BX 0;
 prb A 0;
@@ -172,6 +186,33 @@ pra MAR 0;
 prb CR mem_start;
 jmp CR mem_start;
 
+label rom_start;
+//Clear regs
+prb AX 0;
+pra AX 0;
+label rom_LOOP;
+out AX PRGM_ROM_ADDRS;
+mov AX MAR;
+in BX PRGM_ROM_VAL;
+out AX 0;
+mov BX MDR;
+
+mov AX A OP_+;
+prb B 1;
+pra B 1;
+mov RES AX OP_+;
+
+mov AX A OP_+;
+//Load until at 0xff00, then stop and jump to loaded program
+prb B 0x0100;
+pra B 0x0100;
+mov RES CND OP_+;
+prb CR rom_LOOP;
+jpc CR rom_LOOP;
+
+prb CR prepare_for_jump;
+jmp CR prepare_for_jump;
+
 label string;
 #string
-Comp16 Bootloader   Esc-Serial\
+Comp16 Bootloader   Esc-Serial   F1-ROM\

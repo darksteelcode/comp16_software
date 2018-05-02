@@ -1,6 +1,6 @@
 /* stdio.asm - Comp16 Standard Input / Output Assembly File
  * Edward Wawrzynek
- * Used prefixes - GFX_, KEY_, SERIAL_
+ * Used prefixes - GFX_, KEY_, SERIAL_, PRGM_ROM_
  * --------
  * This file defines io ports and some key codes
  * TODO: Get a better way to get key codes for released keys - (macro to add release code?)
@@ -30,6 +30,10 @@
 #define SERIAL_DATA_OUT 3\
 //This port contains a bit, that when high, indicates that the uart is still sending data. If low, the uart is not busy, and data can be sent
 #define SERIAL_TX_BUSY 4\
+
+//PRGM_ROM ports
+#define PRGM_ROM_ADDRS 14\
+#define PRGM_ROM_VAL 15\
 
 //Key code definitions - ascii unless specified below
 #define KEY_F1 11\

@@ -3,6 +3,6 @@
 #include stdio.c16\
 #include stdtime.c16\
 
-put 61234 FX;
+put 00207 FX;
 call print_unsigned FX;
 call time_hang;

@@ -114,13 +114,14 @@ func print $string {
 \
 
 //Prints and unsigned decimal number, using only as many chars as needed
-//USES AX BX (print_char) AX (Num), BX (main bcd), CX (additional bcd), DX (loop)
+//USES AX BX (print_char) AX (Num), BX (main bcd), CX (additional bcd), DX (loop) EX (bool if non-zero has been printed yet) FX (BX when printing starts)
 func print_unsigned $num {
 	mv $num AX;
 	//Put 0 in all regs for bcd
 	put 0 BX;
 	put 0 CX;
-  	for! FX 0 16 {
+  	put 0 EX;
+  	for! DX 0 16 {
 		//Add 3 to all digits greater than 4
 		// This will be added later
 		print_unsigned_ADD3IF4 BX 0x0005 0x0003 0x000f;
@@ -154,10 +155,40 @@ func print_unsigned $num {
   		put 1 B;
   		mv RES AX;
 	};
-	mv BX print_unsigned_TMP;
-  	call print_char CX;
-  	mv print_unsigned_TMP AX;
-  	call print_hex AX;
+  	mv BX FX;
+  	//If CX != 0, print it
+	mv CX A OP_NOT;
+  	if_not! RES {
+		mv CX A OP_+;
+	  	put print_ASCII_NUM_CHARS B;
+	  	mv RES MAR;
+	  	call print_char MDR;
+	  	put 0xffff EX;
+	};
+  	//For each digit, print it if digit!=0 or EX
+	mv FX CX;
+  	put 12 FX;
+  	for! DX 0 4 {
+		mv CX A OP_>>;
+	  	mv FX B OP_>>;
+	  	mv RES A OP_&;
+	  	put 0x000f B;
+	  	mv RES AX;
+	  	mv AX A OP_OR;
+	  	mv EX B OP_OR;
+	  	if! RES {
+			//Have a check here for 0 or EX
+
+	  		mv AX A OP_+;
+	  		put print_ASCII_NUM_CHARS B;
+	  		mv RES MAR;
+	  		put 0xffff EX;
+	  		call print_char MDR;
+	  	};
+	  	mv FX A OP_-;
+	  	put 4 B;
+	  	mv RES FX;
+	};
 
 };
 
@@ -178,7 +209,7 @@ func print_hex $num {
 	  	mv RES A OP_>>;
 	  	mv DX B OP_>>;
 	  	mv RES A OP_+;
-	  	put print_hex_CHARS B OP_+;
+	  	put print_ASCII_NUM_CHARS B OP_+;
 	  	mv RES MAR;
 	  	call print_char MDR;
 
@@ -193,7 +224,7 @@ func print_hex $num {
 	};
 };
 
-#string print_hex_CHARS
+#string print_ASCII_NUM_CHARS
 0123456789abcdef\
 
 //Prints a binary value - no prefix, 16 chars
@@ -209,7 +240,7 @@ func print_binary $num {
 	  	mv RES A OP_>>;
 	  	mv DX B OP_>>;
 	  	mv RES A OP_+;
-	  	put print_binary_CHARS B OP_+;
+	  	put print_ASCII_NUM_CHARS B OP_+;
 	  	mv RES MAR;
 	  	call print_char MDR;
 
@@ -223,9 +254,6 @@ func print_binary $num {
 
 	};
 };
-
-#string print_binary_CHARS
-01\
 
 //Clears the screen, resets cursor
 //Uses AX BX

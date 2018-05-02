@@ -293,7 +293,7 @@ label SHELL_RETURN;
 		mv 0 time_wo_2speed;
 		put 2 ball_time;
 		draw_scores;
-		wait! 40;
+		call time_delay_ms 800;
 	};
 \
 
@@ -345,7 +345,7 @@ draw_ball;
 draw_padle padle1 1;
 draw_padle padle2 38;
 draw_scores;
-wait! 30;
+call time_delay_ms 600;
 call key_clear;
 call key_wait_for_press;
 call print_clear;
@@ -354,7 +354,7 @@ draw_padle padle1 1;
 draw_padle padle2 38;
 draw_scores;
 call key_clear;
-wait! 40;
+call time_delay_ms 800;
 inf_loop! {
 
 	mv key_count B OP_>=;
@@ -389,7 +389,7 @@ inf_loop! {
 	check_speed;
 	check_end score1 win1;
 	check_end score2 win2;
-	wait! 1;
+	call time_delay_ms 2;
 
 	inc move_count;
 	inc key_count;

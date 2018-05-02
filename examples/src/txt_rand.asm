@@ -4,7 +4,7 @@
 
 #include std.asm\
 #include stdio.c16\
-#include stdtime.asm\
+#include stdtime.c16\
 
 for! FX 0 1000 {
 mov FX A OP_*;
@@ -16,7 +16,6 @@ mov FX B OP_*;
 call print_char RES;
 
 };
-wait! 10;
 
 #ifnotdef !IS_SHELL
 label SHELL_RETURN;

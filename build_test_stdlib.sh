@@ -1,6 +1,6 @@
 #!/bin/bash
 
-for file in stdlib/src/*.asm
+for file in stdlib/src/*.*
 do
 name="${file##*/}"
 nameNoExten="${name%%.*}"

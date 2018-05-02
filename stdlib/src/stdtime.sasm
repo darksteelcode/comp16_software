@@ -8,7 +8,70 @@
 
 //!INCLUDE_PLACE_AT_END
 
+#include stdlang.asm\
+#include stdstruct.asm\
+#include stdtime.asm\
+
+//Hang the program
+//USES NONE
 func time_hang {
 	label time_hang_START;
 	jump time_hang_START;
+};
+
+//Gets uptime in mseconds
+//USES NONE
+func time_ms {
+	in BP TIMEIO_MS;
+};
+
+//Gets uptime in seconds
+//Uses NONE
+func time_s {
+	in BP TIMEIO_S;
+};
+
+//Delays for the specified number of milliseconds
+//USES AX BX CX
+func time_delay_ms $time {
+	in AX TIMEIO_MS;
+	mv $time BX;
+	label time_delay_ms_LOOP;
+	//Get time elapsed since start
+	in A TIMEIO_MS;
+	mv BX B OP_-;
+	mv RES CX OP_-;
+	//If time to wait is greater than elapsed, loop
+	mv CX B OP_>;
+	mv AX A OP_>;
+	mv RES CND OP_>;
+	jumpc time_delay_ms_LOOP;
+	//If the difference is 0, still loop, as simply no ms have elapsed
+	mv CX A OP_==;
+	put 0 B;
+	mv RES CND;
+	jumpc time_delay_ms_LOOP;
+
+};
+
+//Delays for the specified number of seconds
+//USES AX BX CX
+func time_delay_s $time {
+	in AX TIMEIO_S;
+	mv $time BX;
+	label time_delay_s_LOOP;
+	//Get time elapsed since start
+	in A TIMEIO_S;
+	mv BX B OP_-;
+	mv RES CX OP_-;
+	//If time to wait is greater than elapsed, loop
+	mv CX B OP_>;
+	mv AX A OP_>;
+	mv RES CND OP_>;
+	jumpc time_delay_s_LOOP;
+	//If the difference is 0, still loop, as simply no s have elapsed
+	mv CX A OP_==;
+	put 0 B;
+	mv RES CND;
+	jumpc time_delay_s_LOOP;
 };

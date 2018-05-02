@@ -23,7 +23,7 @@ call SHELL_RUN_CMD SHELL_cmd;
 mv BP PC;
 label SHELL_RETURN;
 jump SHELL_LOOP_START;
-hang!;
+call time_hang;
 
 //Pointer to command entered
 label SHELL_cmd;
@@ -316,6 +316,7 @@ call print_char '\t';
 in AX TIMEIO_S;
 call print_hex AX;
 call print_char '\n';
+call time_delay_ms 100;
 
 in CND KEY_IN_WAITING;
 jumpc SHELL_RETURN;

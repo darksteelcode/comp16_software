@@ -1,6 +1,6 @@
 /* stdio.asm - Comp16 Standard Input / Output Assembly File
  * Edward Wawrzynek
- * Used prefixes - GFX_, KEY_, SERIAL_, PRGM_ROM_
+ * Used prefixes - GFX_, KEY_, SERIAL_, PRGM_ROM_, TIMEIO_
  * --------
  * This file defines io ports and some key codes
  * TODO: Get a better way to get key codes for released keys - (macro to add release code?)
@@ -8,7 +8,7 @@
 
 #include std.asm\
 
-//Define IO Ports
+//Define IO Ports, even ones not used in .sasm
 
 //Graphics Memory Ports
 #define GFX_TXT_ADDR 5\

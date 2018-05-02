@@ -1,6 +1,6 @@
 /* stdio.c16 - Comp16 Standard Input / Output Include file
  * Edward Wawrzynek
- * Used prefixes - print_, key_, serial_, GFX_, KEY_, SERIAL_, PRGM_ROM
+ * Used prefixes - print_, key_, serial_, GFX_, KEY_, SERIAL_, PRGM_ROM_, TIMEIO_
  * --------
  * This file contains includes for the stdio files
  * TODO: NONE (the .sasm file will have to be linked to rom once stdio is included in an OS)

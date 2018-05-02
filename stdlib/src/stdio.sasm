@@ -361,3 +361,4 @@ func key_wait_for_press {
 	mv RES CND;
 	jumpc key_wait_for_press_START;
 };
+//Function

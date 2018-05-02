@@ -7,11 +7,11 @@ label SHELL_RETURN;
 \
 
 call print &img1;
-wait! 64;
+call time_delay_ms 1200;
 call print &img2;
-wait! 64;
+call time_delay_ms 1200;
 call print &img3;
-wait! 64;
+call time_delay_ms 1200;
 jump SHELL_RETURN;
 
 label img1;

@@ -14,14 +14,14 @@
 		mv RES CND;
 		jumpc MACROID0;
 \
-wait! 20;
+call time_delay_ms 400;
 call key_clear;
 put 0 FLASH_cov;
 put 0x00db FX;
 label FLASH_start;
 
 fill_screen! FX;
-wait! 1;
+call time_delay_ms 20;
 
 in CND KEY_IN_WAITING;
 jumpc SHELL_RETURN;

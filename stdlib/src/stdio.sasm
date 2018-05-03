@@ -12,7 +12,7 @@
 #include stdstruct.asm\
 #include stdio.asm\
 
-//Printing Functions - print_scroll, print_char, print, print_hex, print_binary, print_signed, print_unsigned, print_clear, print_at
+//Printing Functions - print_scroll, print_char, print, print_hex, print_binary, print_signed, print_unsigned, print_clear, print_at, print_set_cursor
 
 //Scroll the text in gfx txt mem up a line
 //USES AX BX
@@ -100,6 +100,7 @@ func print $string {
 	};
 };
 
+//print_unisgned uses this - DON'T USE THIS MACRO IN YOUR PROGRAMS
 #macro print_unsigned_ADD3IF4 REG reg VAL gc VAL add VAL mask
 	mv reg A OP_&;
 	put mask B;
@@ -189,12 +190,21 @@ func print_unsigned $num {
 	  	put 4 B;
 	  	mv RES FX;
 	};
-
+	//If nothing was printed, print zero
+	if_not! EX {
+		call print_char '0';
+	};
 };
 
-label print_unsigned_TMP;
-. 0;
-
+//Sets the cursor position on screen
+//USES NONE
+func print_set_cursor $x $y {
+	mv $y A OP_*;
+	put 40 B;
+	mv RES A OP_+;
+	mv $x B;
+	mv RES print_SCREEN_POS;
+};
 
 //Prints a hex value to the screen - no prefix, four chars
 //USES AX BX CX DX EX

@@ -1,0 +1,35 @@
+/* stdio.c16 - Comp16 Random Source Assembley File
+ * Edward Wawrzynek
+ * Used prefixes - rand_
+ * --------
+ * This file contains functions for random number generation
+ * TODO: Write a more complete library, and get a better psuedo-random algorithm
+ */
+
+//!INCLUDE_PLACE_AT_END
+
+#include stdlang.asm\
+#include stdstruct.asm\
+
+func rand_seed $seed {
+	mv $seed BX;
+	mv BX rand_CUR_VAL;
+};
+
+label rand_CUR_VAL;
+. 0;
+
+func rand_gen {
+	mv rand_CUR_VAL A OP_*;
+	mv A B OP_*;
+	mv RES A OP_^;
+	put 0xf43d B;
+	mv RES A OP_>>;
+	put 1 B;
+	mv RES A OP_*;
+	mv rand_CUR_VAL B OP_*;
+	mv RES A OP_~;
+
+	mv RES rand_CUR_VAL OP_*;
+	mv rand_CUR_VAL BP;
+};

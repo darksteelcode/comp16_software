@@ -1,5 +1,5 @@
-/* Pong - darksteelcode
- * A replication of the classic. It is made more as a demonstration that comp16 can run a half-usefull program, and that one can be programed without terrible pan
+/* Pong - Edward Wawrzynek
+ * A replication of the classic.
  */
 
 #ifnotdef !IS_SHELL

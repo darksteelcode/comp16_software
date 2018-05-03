@@ -64,13 +64,9 @@ func minesweeper_draw {
 			mv EX A OP_+;
 			put minesweeper_MINES B;
 			mv RES MAR;
-			if_not! MDR {
+			if_not_else! MDR {
 				call print_char '_';
-			};
-			mv EX A OP_+;
-			put minesweeper_MINES B;
-			mv RES MAR;
-			if! MDR {
+			} {
 				call print_char 'X';
 			};
 			call print_char ' ';

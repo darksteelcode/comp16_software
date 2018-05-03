@@ -11,7 +11,7 @@ call print &SHELL_boot_msg;
 call SHELL_LOAD_PRGMS;
 call print_char '\n';
 mv FX SHELL_loaded;
-call print_hex SHELL_loaded;
+call print_unsigned SHELL_loaded;
 call print &SHELL_prgms_loaded;
 //Interpreter loop
 label SHELL_LOOP_START;
@@ -306,19 +306,5 @@ jump EXIT;
 //time cmd
 . 0x0fff;
 #string
-uptime\
-call key_wait_for_press;
-call key_clear;
-label TIME_start;
-in AX TIMEIO_MS;
-call print_hex AX;
-call print_char '\t';
-in AX TIMEIO_S;
-call print_hex AX;
-call print_char '\n';
-call time_delay_ms 100;
-
-in CND KEY_IN_WAITING;
-jumpc SHELL_RETURN;
-
-jump TIME_start;
+time\
+#include examples/src/clock.asm\

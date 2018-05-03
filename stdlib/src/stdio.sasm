@@ -114,7 +114,7 @@ func print $string {
 \
 
 //Prints and unsigned decimal number, using only as many chars as needed
-//USES AX BX (print_char) AX (Num), BX (main bcd), CX (additional bcd), DX (loop) EX (bool if non-zero has been printed yet) FX (BX when printing starts)
+//USES AX BX CX DX EX FX
 func print_unsigned $num {
 	mv $num AX;
 	//Put 0 in all regs for bcd
@@ -197,17 +197,16 @@ label print_unsigned_TMP;
 
 
 //Prints a hex value to the screen - no prefix, four chars
-//USES AX BX CX DX EX FX
+//USES AX BX CX DX EX
 func print_hex $num {
 	mv $num EX;
-  	put 0xf000 FX;
   	put 12 DX;
   	for! CX 0 4 {
 	  	//Get each char: ($num & FX) >> DX
-		mv EX A OP_&;
-	  	mv FX B OP_&;
-	  	mv RES A OP_>>;
+		mv EX A OP_>>;
 	  	mv DX B OP_>>;
+		mv RES A OP_&;
+		put 0x000f B;
 	  	mv RES A OP_+;
 	  	put print_ASCII_NUM_CHARS B OP_+;
 	  	mv RES MAR;
@@ -216,10 +215,6 @@ func print_hex $num {
 	  	mv DX A OP_-;
 	  	put 4 B;
 	  	mv RES DX;
-
-	  	mv FX A OP_>>;
-	  	put 4 B;
-	  	mv RES FX;
 
 	};
 };
@@ -231,14 +226,13 @@ func print_hex $num {
 //USES AX BX CX DX EX FX
 func print_binary $num {
 	mv $num EX;
-  	put 0b1000000000000000 FX;
   	put 15 DX;
   	for! CX 0 16 {
 	  	//Get each char: ($num & FX) >> DX
-		mv EX A OP_&;
-	  	mv FX B OP_&;
-	  	mv RES A OP_>>;
+	  	mv EX A OP_>>;
 	  	mv DX B OP_>>;
+		mv RES A OP_&;
+		put 1 B;
 	  	mv RES A OP_+;
 	  	put print_ASCII_NUM_CHARS B OP_+;
 	  	mv RES MAR;
@@ -247,10 +241,6 @@ func print_binary $num {
 	  	mv DX A OP_-;
 	  	put 1 B;
 	  	mv RES DX;
-
-	  	mv FX A OP_>>;
-	  	put 1 B;
-	  	mv RES FX;
 
 	};
 };

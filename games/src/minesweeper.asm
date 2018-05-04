@@ -16,6 +16,7 @@ in AX TIMEIO_MS;
 call rand_seed AX;
 //Generate Board
 call minesweeper_gen_mines;
+call minesweeper_gen_adjacent;
 //Main program loop
 inf_loop! {
 	call minesweeper_text;
@@ -54,6 +55,130 @@ func minesweeper_gen_mines {
 		put 1 MDR;
 	};
 };
+//Calculate values for adjacent array - find number of mines in adjacent squares
+func minesweeper_gen_adjacent {
+	//For each square, check
+	for! FX 0 64 {
+	//Number of adjacent mines
+	put 0 EX;
+	//If not on first line (FX > 7), check spot above
+	mv FX A OP_>;
+	put 7 B;
+	if! RES {
+		mv FX A OP_-;
+		put 8 B;
+		mv RES A OP_+;
+		put minesweeper_MINES B;
+		mv RES MAR;
+		mv EX A OP_+;
+		mv MDR B OP_+;
+		mv RES EX;
+		//Check above left, if appropriate
+		mv FX A OP_&;
+		put 0b000111 B;
+		if! RES {
+			mv FX A OP_-;
+			put 9 B;
+			mv RES A OP_+;
+			put minesweeper_MINES B;
+			mv RES MAR;
+			mv EX A OP_+;
+			mv MDR B OP_+;
+			mv RES EX;
+		};
+		//Check above right, if appropriate
+		mv FX A OP_&;
+		put 0b000111 B;
+		mv RES A OP_-;
+		put 0b111 B;
+		if! RES {
+			mv FX A OP_-;
+			put 7 B;
+			mv RES A OP_+;
+			put minesweeper_MINES B;
+			mv RES MAR;
+			mv EX A OP_+;
+			mv MDR B OP_+;
+			mv RES EX;
+		};
+	};
+	//If FX%8 != 0, check spot to the left
+	mv FX A OP_&;
+	put 0b000111 B;
+	if! RES {
+		mv FX A OP_-;
+		put 1 B;
+		mv RES A OP_+;
+		put minesweeper_MINES B;
+		mv RES MAR;
+		mv EX A OP_+;
+		mv MDR B OP_+;
+		mv RES EX;
+	};
+	//If 56>FX, check spot down
+	mv FX B OP_>;
+	put 56 A;
+	if! RES {
+		mv FX A OP_+;
+		put 8 B;
+		mv RES A OP_+;
+		put minesweeper_MINES B;
+		mv RES MAR;
+		mv EX A OP_+;
+		mv MDR B OP_+;
+		mv RES EX;
+		//Check below left, if appropriate
+		mv FX A OP_&;
+		put 0b000111 B;
+		if! RES {
+			mv FX A OP_+;
+			put 7 B;
+			mv RES A OP_+;
+			put minesweeper_MINES B;
+			mv RES MAR;
+			mv EX A OP_+;
+			mv MDR B OP_+;
+			mv RES EX;
+		};
+		//Check below right, if appropriate
+		mv FX A OP_&;
+		put 0b000111 B;
+		mv RES A OP_-;
+		put 0b111 B;
+		if! RES {
+			mv FX A OP_+;
+			put 9 B;
+			mv RES A OP_+;
+			put minesweeper_MINES B;
+			mv RES MAR;
+			mv EX A OP_+;
+			mv MDR B OP_+;
+			mv RES EX;
+		};
+	};
+	//If FX%8 != 111, check spot to right
+	mv FX A OP_&;
+	put 0b000111 B;
+	mv RES A OP_-;
+	put 0b111 B;
+	if! RES {
+		mv FX A OP_+;
+		put 1 B;
+		mv RES A OP_+;
+		put minesweeper_MINES B;
+		mv RES MAR;
+		mv EX A OP_+;
+		mv MDR B OP_+;
+		mv RES EX;
+	};
+	//Store EX in appropriate location in array
+	mv FX A OP_+;
+	put minesweeper_ADJACENT B;
+	mv RES MAR;
+	mv EX MDR;
+
+	};
+};
 
 //Draw the board
 func minesweeper_draw {
@@ -65,7 +190,13 @@ func minesweeper_draw {
 			put minesweeper_MINES B;
 			mv RES MAR;
 			if_not_else! MDR {
-				call print_char '_';
+				mv EX A OP_+;
+				put minesweeper_ADJACENT B;
+				mv RES MAR;
+				mv MDR A OP_+;
+				put 48 B;
+				mv RES A;
+				call print_char A;
 			} {
 				call print_char 'X';
 			};

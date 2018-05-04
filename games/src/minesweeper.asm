@@ -9,7 +9,6 @@
 
 //Start timer, clear screen, clear keys, seed random
 call print_clear;
-call key_wait_for_press;
 call key_clear;
 call minesweeper_init;
 in AX TIMEIO_MS;
@@ -21,7 +20,9 @@ call minesweeper_gen_adjacent;
 inf_loop! {
 	call minesweeper_text;
 	call minesweeper_draw;
-	call time_delay_ms 200;
+	call minesweeper_handle_keys;
+	call minesweeper_draw_cursor;
+	call time_delay_ms 20;
 };
 
 //Board Arrays
@@ -37,6 +38,17 @@ label minesweeper_ADJACENT;
 label minesweeper_FLAGS;
 #repeat 64
 . 0;\
+
+//variables
+label minesweeper_CURX;
+. 0;
+label minesweeper_CURY;
+. 0;
+
+func minesweeper_init {
+	in AX TIMEIO_S;
+	mv AX minesweeper_time_start;
+};
 
 //Board generation funcs
 //Generate mines - add 10 mines
@@ -214,6 +226,26 @@ func minesweeper_draw {
 	};
 };
 
+//Darw the cursor on the board
+func minesweeper_draw_cursor {
+	//Only draw if ms& 0b100000000==0
+	mv CR CR OP_&;
+	in A TIMEIO_MS;
+	put 0x80 B;
+	if_not! RES {
+		mv minesweeper_CURY A OP_*;
+		put 2 B;
+		mv RES A OP_+;
+		put 2 B;
+		mv RES AX;
+		mv minesweeper_CURX A OP_*;
+		put 2 B;
+		mv RES BX;
+		call print_set_cursor BX AX;
+		call print_char 0x1fdb;
+	};
+};
+
 //Draw the current time in the top right, and minesweeper in top left
 func minesweeper_text {
 	call print_set_cursor 0 0;
@@ -225,6 +257,64 @@ func minesweeper_text {
 	call print_unsigned RES;
 };
 
+//Handle key presses
+func minesweeper_handle_keys {
+	in A KEY_IN_WAITING;
+	if! A {
+		//Put key in
+		in AX KEY_DATA;
+		out CR KEY_NEXT;
+		//Don't use releases
+		mv AX A OP_&;
+		put 0xff00 B;
+		mv RES CND;
+		jumpc minesweeper_handle_keys_END;
+		//Handle up key
+		mv AX A OP_-;
+		put KEY_UP B;
+		if_not! RES {
+			call minesweeper_move_cursor 0 -1;
+		};
+		//Handle key down
+		mv AX A OP_-;
+		put KEY_DOWN B;
+		if_not! RES {
+			call minesweeper_move_cursor 0 1;
+		};
+		//Handle left key
+		mv AX A OP_-;
+		put KEY_LEFT B;
+		if_not! RES {
+			call minesweeper_move_cursor -1 0;
+		};
+		//Handle right down
+		mv AX A OP_-;
+		put KEY_RIGHT B;
+		if_not! RES {
+			call minesweeper_move_cursor 1 0;
+		};
+
+	};
+	label minesweeper_handle_keys_END;
+};
+
+//Move the cursor by x and y
+func minesweeper_move_cursor $x $y {
+	mv minesweeper_CURX A OP_+;
+	mv $x B OP_+;
+	//Limit to 0-7
+	mv RES A OP_&;
+	put 0b111 B;
+	mv RES minesweeper_CURX;
+
+	mv minesweeper_CURY A OP_+;
+	mv $y B OP_+;
+	//Limit to 0-7
+	mv RES A OP_&;
+	put 0b111 B;
+	mv RES minesweeper_CURY;
+};
+
 label minesweeper_time_start;
 . 0;
 
@@ -233,12 +323,3 @@ Time: \
 
 #string minesweeper_name
 Minesweeper\
-
-func minesweeper_init {
-	in AX TIMEIO_S;
-	mv AX minesweeper_time_start;
-};
-
-func minesweeper_gen_board {
-
-};

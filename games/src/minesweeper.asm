@@ -38,6 +38,10 @@ label minesweeper_ADJACENT;
 label minesweeper_FLAGS;
 #repeat 64
 . 0;\
+//Revealed array - if true, square has been revealed
+label minesweeper_REVEALED;
+#repeat 64
+. 0;\
 
 //variables
 label minesweeper_CURX;
@@ -199,19 +203,34 @@ func minesweeper_draw {
 	call print_set_cursor 0 2;
 	for! EX 0 64 {
 			mv EX A OP_+;
-			put minesweeper_MINES B;
+			put minesweeper_FLAGS B;
+			mv RES MAR;
+			if! MDR {
+				call print_char '!';
+				jump minesweeper_draw_END;
+			};
+
+			mv EX A OP_+;
+			put minesweeper_REVEALED B;
 			mv RES MAR;
 			if_not_else! MDR {
-				mv EX A OP_+;
-				put minesweeper_ADJACENT B;
-				mv RES MAR;
-				mv MDR A OP_+;
-				put 48 B;
-				mv RES A;
-				call print_char A;
+				call print_char 219;
 			} {
-				call print_char 'X';
+				mv EX A OP_+;
+				put minesweeper_MINES B;
+				mv RES MAR;
+				if_else! MDR {
+					call print_char 0xe058;
+				} {
+					mv EX A OP_+;
+					put minesweeper_ADJACENT B;
+					mv RES MAR;
+					mv MDR A OP_+;
+					put 48 B;
+					call print_char RES;
+				};
 			};
+		label minesweeper_draw_END;
 			call print_char ' ';
 			mv EX A OP_&;
 			put 0x0007 B;
@@ -293,9 +312,65 @@ func minesweeper_handle_keys {
 		if_not! RES {
 			call minesweeper_move_cursor 1 0;
 		};
+		//Handle enter
+		mv AX A OP_-;
+		put 10 B;
+		if_not! RES {
+			call minesweeper_reveal minesweeper_CURX minesweeper_CURY;
+		};
+		//Handle space
+		mv AX A OP_-;
+		put 32 B;
+		if_not! RES {
+			call minesweeper_flag minesweeper_CURX minesweeper_CURY;
+		};
 
 	};
 	label minesweeper_handle_keys_END;
+};
+
+//Flag a square
+func minesweeper_flag $x $y {
+	mv $y A OP_*;
+	put 8 B;
+	mv RES A OP_+;
+	mv $x B OP_+;
+	mv RES AX;
+	//You can't flag a revealed square
+	mv AX A OP_+;
+	put minesweeper_REVEALED B;
+	mv RES MAR;
+	mv MDR CND;
+	jumpc minesweeper_flag_END;
+
+	mv AX A OP_+;
+	put minesweeper_FLAGS B;
+	mv RES MAR;
+	mv MDR A OP_NOT;
+	mv RES MDR;
+	label minesweeper_flag_END;
+};
+
+//Reveal a square
+func minesweeper_reveal $x $y {
+	mv $y A OP_*;
+	put 8 B;
+	mv RES A OP_+;
+	mv $x B OP_+;
+	mv RES AX;
+	//You can't reveal a flaged square-unflag it first
+	mv AX A OP_+;
+	put minesweeper_FLAGS B;
+	mv RES MAR;
+	mv MDR CND;
+	jumpc minesweeper_reveal_END;
+	mv AX A OP_+;
+	put minesweeper_REVEALED B;
+	mv RES MAR;
+	put 1 MDR;
+	//check for death and additional reveals - do later
+
+	label minesweeper_reveal_END;
 };
 
 //Move the cursor by x and y

@@ -308,3 +308,9 @@ jump EXIT;
 #string
 time\
 #include examples/src/clock.asm\
+
+//minesweeper
+. 0x0fff;
+#string
+mines\
+#include games/src/minesweeper.asm\

@@ -23,6 +23,7 @@ inf_loop! {
 	call minesweeper_handle_keys;
 	call minesweeper_draw_cursor;
 	call minesweeper_check_win;
+	call minesweeper_reveal_zeros;
 	call time_delay_ms 20;
 };
 
@@ -207,7 +208,7 @@ func minesweeper_draw {
 			put minesweeper_FLAGS B;
 			mv RES MAR;
 			if! MDR {
-				call print_char '!';
+				call print_char 0xf021;
 				jump minesweeper_draw_END;
 			};
 
@@ -377,9 +378,106 @@ func minesweeper_reveal $x $y {
 	if! MDR {
 		call minesweeper_die;
 	};
-	//check for additional reveals - do later
 
 	label minesweeper_reveal_END;
+};
+
+//go through minesweeper_REVEALED, and if a zero is found, reveal all the squares around it
+func minesweeper_reveal_zeros {
+	//X loop
+	for! EX 0 8 {
+		//Y loop
+		for! FX 0 8 {
+			mv FX A OP_*;
+			put 8 B;
+			mv RES A OP_+;
+			mv EX B OP_+;
+			mv RES DX;
+			//CHeck if revealed
+			mv DX A OP_+;
+			put minesweeper_REVEALED B;
+			mv RES MAR;
+			if! MDR {
+				//Check if zero in minesweeper_ADJACENT
+				mv DX A OP_+;
+				put minesweeper_ADJACENT B;
+				mv RES MAR;
+				if_not! MDR {
+					call minesweeper_reveal_check_adj_up EX FX;
+					call minesweeper_reveal_check_adj_down EX FX;
+					call minesweeper_reveal_check_adj_left EX FX;
+					call minesweeper_reveal_check_adj_right EX FX;
+					//Handle new zeros in the next frame
+					jump minesweeper_reveal_zeros_END;
+				};
+			};
+		};
+	};
+	label minesweeper_reveal_zeros_END;
+};
+
+#macro minesweeper_FORCE_REV REG X REG Y
+	mv Y A OP_*;
+	put 8 B;
+	mv RES A OP_+;
+	mv X B OP_+;
+	mv RES A OP_+;
+	put minesweeper_REVEALED B;
+	mv RES MAR;
+	put 1 MDR;
+\
+
+func minesweeper_reveal_check_adj_left $x1 $y1 {
+	//If $x > 0, reveal left
+	mv $x1 A OP_>;
+	put 0 B;
+	if! RES {
+		mv $x1 A OP_-;
+		put 1 B;
+		mv RES BX;
+		mv $y1 CX;
+		minesweeper_FORCE_REV BX CX;
+	};
+};
+
+func minesweeper_reveal_check_adj_up $x2 $y2 {
+	//If $y > 0, reveal up
+	mv $y2 A OP_>;
+	put 0 B;
+	if! RES {
+		mv $x2 BX;
+		mv $y2 A OP_-;
+		put 1 B;
+		mv RES CX;
+		minesweeper_FORCE_REV BX CX;
+	};
+};
+
+func minesweeper_reveal_check_adj_right $x3 $y3 {
+	//If $x != 7, reveal right
+	mv $x3 A OP_-;
+	put 7 B;
+	if! RES {
+		mv $x3 A OP_+;
+		put 1 B;
+		mv RES BX;
+		mv $y3 CX;
+		minesweeper_FORCE_REV BX CX;
+	};
+};
+
+func minesweeper_reveal_check_adj_down $x4 $y4 {
+	//If $y != 7, reveal down
+	mv $y4 A OP_-;
+	put 7 B;
+	if! RES {
+		mv $y4 A OP_+;
+		put 1 B;
+		mv RES CX;
+		mv $x4 BX;
+		minesweeper_FORCE_REV BX CX;
+	};
+
 };
 
 //Move the cursor by x and y
@@ -422,8 +520,6 @@ func minesweeper_die {
 func minesweeper_check_win {
 	//Number of flagged squares
 	put 0 AX;
-	//revealed | flaged
-	put 0 BX;
 	//true if a bad square has been found
 	put 0 CX;
 	for! FX 0 64 {

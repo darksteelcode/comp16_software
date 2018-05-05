@@ -22,6 +22,7 @@ inf_loop! {
 	call minesweeper_draw;
 	call minesweeper_handle_keys;
 	call minesweeper_draw_cursor;
+	call minesweeper_check_win;
 	call time_delay_ms 20;
 };
 
@@ -368,7 +369,15 @@ func minesweeper_reveal $x $y {
 	put minesweeper_REVEALED B;
 	mv RES MAR;
 	put 1 MDR;
-	//check for death and additional reveals - do later
+	//check for death
+	mv AX A OP_+;
+	put minesweeper_MINES B;
+	mv RES MAR;
+	//A mine was revealed
+	if! MDR {
+		call minesweeper_die;
+	};
+	//check for additional reveals - do later
 
 	label minesweeper_reveal_END;
 };
@@ -390,6 +399,69 @@ func minesweeper_move_cursor $x $y {
 	mv RES minesweeper_CURY;
 };
 
+//The player died
+func minesweeper_die {
+	call print_set_cursor 15 0;
+	call print &minesweeper_death_msg;
+	//Reveal the full board, and draw
+	for! FX 0 64 {
+		mv FX A OP_+;
+		put minesweeper_REVEALED B;
+		mv RES MAR;
+		put 1 MDR;
+		mv FX A OP_+;
+		put minesweeper_FLAGS B;
+		mv RES MAR;
+		put 0 MDR;
+	};
+	call minesweeper_draw;
+	call time_hang;
+};
+
+//Check if the player has won - if all squares have been revealed or flaged, and exactly 10 squares are flagged, the game has been won
+func minesweeper_check_win {
+	//Number of flagged squares
+	put 0 AX;
+	//revealed | flaged
+	put 0 BX;
+	//true if a bad square has been found
+	put 0 CX;
+	for! FX 0 64 {
+		put 0 BX;
+		mv FX A OP_+;
+		put minesweeper_REVEALED B;
+		mv RES MAR;
+		if! MDR {
+			put 1 BX;
+		};
+		mv FX A OP_+;
+		put minesweeper_FLAGS B;
+		mv RES MAR;
+		if! MDR {
+			put 1 BX;
+			inc AX;
+		};
+		mv BX A OP_NOT;
+		mv RES A OP_|;
+		mv CX B;
+		mv RES CX;
+
+	};
+	mv AX A OP_-;
+	put 10 B;
+	mv RES A OP_|;
+	mv CX B OP_|;
+	if_not! RES {
+		call minesweeper_draw;
+		call print_set_cursor 16 0;
+		call print &minesweeper_win_msg;
+		call time_hang;
+	};
+
+	label minesweeper_check_win_END;
+};
+
+
 label minesweeper_time_start;
 . 0;
 
@@ -398,3 +470,9 @@ Time: \
 
 #string minesweeper_name
 Minesweeper\
+
+#string minesweeper_death_msg
+YOU DIED\
+
+#string minesweeper_win_msg
+YOU WON\

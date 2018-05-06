@@ -365,6 +365,12 @@ func minesweeper_handle_keys {
 		if_not! RES {
 			call minesweeper_flag minesweeper_CURX minesweeper_CURY;
 		};
+		//Handle Esc
+		mv AX A OP_-;
+		put 27 B;
+		if_not! RES {
+			jump SHELL_RETURN;
+		};
 
 	};
 	label minesweeper_handle_keys_END;

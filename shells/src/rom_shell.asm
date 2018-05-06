@@ -312,5 +312,5 @@ time\
 //minesweeper
 . 0x0fff;
 #string
-mines\
+minesweeper\
 #include games/src/minesweeper.asm\

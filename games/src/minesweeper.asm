@@ -7,6 +7,12 @@
 #include stdtime.c16\
 #include rand.sasm\
 
+#ifnotdef !SHELL_RETURN
+label SHELL_RETURN;
+\
+
+//Reset
+call minesweeper_reset;
 //Start timer, clear screen, clear keys, seed random
 call print_clear;
 call key_clear;
@@ -25,6 +31,25 @@ inf_loop! {
 	call minesweeper_check_win;
 	call minesweeper_reveal_zeros;
 	call time_delay_ms 20;
+};
+
+#macro minesweeper_reset_CLEAR MEM board
+mv AX A OP_+;
+put board B;
+mv RES MAR;
+put 0 MDR;
+\
+
+func minesweeper_reset {
+	for! AX 0 64 {
+		mv AX A OP_+;
+		minesweeper_reset_CLEAR minesweeper_ADJACENT;
+		minesweeper_reset_CLEAR minesweeper_MINES;
+		minesweeper_reset_CLEAR minesweeper_FLAGS;
+		minesweeper_reset_CLEAR minesweeper_REVEALED;
+	};
+	put 0 minesweeper_CURX;
+	put 0 minesweeper_CURY;
 };
 
 //Board Arrays
@@ -276,6 +301,20 @@ func minesweeper_text {
 	in A TIMEIO_S;
 	mv minesweeper_time_start B OP_-;
 	call print_unsigned RES;
+	//Print number of flagged squares + "/10"
+	call print_set_cursor 17 0;
+	put 0 AX;
+	//Sum minesweeper_FLAGS
+	for! BX 0 64 {
+		mv BX A OP_+;
+		put minesweeper_FLAGS B;
+		mv RES MAR;
+		mv MDR A OP_+;
+		mv AX B OP_+;
+		mv RES AX;
+	};
+	call print_unsigned AX;
+	call print &minesweeper_num_flagged_msg;
 };
 
 //Handle key presses
@@ -408,7 +447,7 @@ func minesweeper_reveal_zeros {
 					call minesweeper_reveal_check_adj_left EX FX;
 					call minesweeper_reveal_check_adj_right EX FX;
 					//Handle new zeros in the next frame
-					jump minesweeper_reveal_zeros_END;
+					//jump minesweeper_reveal_zeros_END;
 				};
 			};
 		};
@@ -427,55 +466,103 @@ func minesweeper_reveal_zeros {
 	put 1 MDR;
 \
 
-func minesweeper_reveal_check_adj_left $x1 $y1 {
+func minesweeper_reveal_check_adj_left $x $y {
 	//If $x > 0, reveal left
-	mv $x1 A OP_>;
+	mv $x A OP_>;
 	put 0 B;
 	if! RES {
-		mv $x1 A OP_-;
+		mv $x A OP_-;
 		put 1 B;
 		mv RES BX;
-		mv $y1 CX;
+		mv $y CX;
 		minesweeper_FORCE_REV BX CX;
 	};
 };
 
-func minesweeper_reveal_check_adj_up $x2 $y2 {
+func minesweeper_reveal_check_adj_up $x $y {
 	//If $y > 0, reveal up
-	mv $y2 A OP_>;
+	mv $y A OP_>;
 	put 0 B;
 	if! RES {
-		mv $x2 BX;
-		mv $y2 A OP_-;
+		mv $x BX;
+		mv $y A OP_-;
 		put 1 B;
 		mv RES CX;
 		minesweeper_FORCE_REV BX CX;
+		//If $x > 0, reveal up-left
+		mv $x A OP_>;
+		put 0 B;
+		if! RES {
+			mv $x A OP_-;
+			put 1 B;
+			mv RES BX;
+			mv $y A OP_-;
+			put 1 B;
+			mv RES CX;
+			minesweeper_FORCE_REV BX CX;
+		};
+		//If $x != 7, reveal up-right
+		mv $x A OP_-;
+		put 7 B;
+		if! RES {
+			mv $x A OP_+;
+			put 1 B;
+			mv RES BX;
+			mv $y A OP_-;
+			put 1 B;
+			mv RES CX;
+			minesweeper_FORCE_REV BX CX;
+		};
 	};
 };
 
-func minesweeper_reveal_check_adj_right $x3 $y3 {
+func minesweeper_reveal_check_adj_right $x $y {
 	//If $x != 7, reveal right
-	mv $x3 A OP_-;
+	mv $x A OP_-;
 	put 7 B;
 	if! RES {
-		mv $x3 A OP_+;
+		mv $x A OP_+;
 		put 1 B;
 		mv RES BX;
-		mv $y3 CX;
+		mv $y CX;
 		minesweeper_FORCE_REV BX CX;
 	};
 };
 
-func minesweeper_reveal_check_adj_down $x4 $y4 {
+func minesweeper_reveal_check_adj_down $x $y {
 	//If $y != 7, reveal down
-	mv $y4 A OP_-;
+	mv $y A OP_-;
 	put 7 B;
 	if! RES {
-		mv $y4 A OP_+;
+		mv $y A OP_+;
 		put 1 B;
 		mv RES CX;
-		mv $x4 BX;
+		mv $x BX;
 		minesweeper_FORCE_REV BX CX;
+		//If $x > 0, reveal down-left
+		mv $x A OP_>;
+		put 0 B;
+		if! RES {
+			mv $x A OP_-;
+			put 1 B;
+			mv RES BX;
+			mv $y A OP_+;
+			put 1 B;
+			mv RES CX;
+			minesweeper_FORCE_REV BX CX;
+		};
+		//If $x != 7, reveal down-right
+		mv $x A OP_-;
+		put 7 B;
+		if! RES {
+			mv $x A OP_+;
+			put 1 B;
+			mv RES BX;
+			mv $y A OP_+;
+			put 1 B;
+			mv RES CX;
+			minesweeper_FORCE_REV BX CX;
+		};
 	};
 
 };
@@ -499,8 +586,6 @@ func minesweeper_move_cursor $x $y {
 
 //The player died
 func minesweeper_die {
-	call print_set_cursor 15 0;
-	call print &minesweeper_death_msg;
 	//Reveal the full board, and draw
 	for! FX 0 64 {
 		mv FX A OP_+;
@@ -513,7 +598,9 @@ func minesweeper_die {
 		put 0 MDR;
 	};
 	call minesweeper_draw;
-	call time_hang;
+	call print_set_cursor 0 39;
+	call print &minesweeper_death_msg;
+	jump SHELL_RETURN;
 };
 
 //Check if the player has won - if all squares have been revealed or flaged, and exactly 10 squares are flagged, the game has been won
@@ -549,9 +636,9 @@ func minesweeper_check_win {
 	mv CX B OP_|;
 	if_not! RES {
 		call minesweeper_draw;
-		call print_set_cursor 16 0;
+		call print_set_cursor 0 39;
 		call print &minesweeper_win_msg;
-		call time_hang;
+		jump SHELL_RETURN;
 	};
 
 	label minesweeper_check_win_END;
@@ -572,3 +659,6 @@ YOU DIED\
 
 #string minesweeper_win_msg
 YOU WON\
+
+#string minesweeper_num_flagged_msg
+/10\
